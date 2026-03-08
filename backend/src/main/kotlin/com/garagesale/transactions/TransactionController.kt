@@ -19,7 +19,11 @@ class TransactionController(private val transactionService: TransactionService) 
         HttpResponse.ok(ApiResponse(transactionService.confirmPayment(id, request.userId())))
 
     @Post("/{id}/confirm-pickup")
-    fun confirmPickup(request: HttpRequest<*>, @PathVariable id: UUID, @Body body: ConfirmPickupRequest): HttpResponse<ApiResponse<TransactionResponse>> =
+    fun confirmPickup(
+        request: HttpRequest<*>,
+        @PathVariable id: UUID,
+        @Body body: ConfirmPickupRequest
+    ): HttpResponse<ApiResponse<TransactionResponse>> =
         HttpResponse.ok(ApiResponse(transactionService.confirmPickup(id, request.userId(), body)))
 
     @Post("/{id}/cancel")

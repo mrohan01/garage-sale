@@ -1,6 +1,37 @@
 build:
-  maxIssues: 10
+  maxIssues: 0
 
 style:
   MagicNumber:
+    active: false
+  WildcardImport:
+    active: false
+  MaxLineLength:
+    active: true
+    maxLineLength: 150
+  ForbiddenComment:
+    active: false
+  UseRequire:
+    active: false
+  ReturnCount:
+    max: 5
+  ThrowsCount:
+    active: false
+  LoopWithTooManyJumpStatements:
+    active: false
+  UnusedPrivateProperty:
+    active: false
+  UnusedParameter:
+    active: false
+  FunctionOnlyReturningConstant:
+    active: false
+
+exceptions:
+  SwallowedException:
+    active: false
+  TooGenericExceptionCaught:
+    active: false
+
+performance:
+  SpreadOperator:
     active: false
