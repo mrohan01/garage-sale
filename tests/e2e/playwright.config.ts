@@ -7,9 +7,10 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'cd ../../mobile-web && npx expo start --web --port 8081',
+    command: 'cd ../../mobile-web && CI=1 npx expo start --web --port 8081',
     port: 8081,
     timeout: 120000,
     reuseExistingServer: true,
+    stderr: 'pipe',
   },
 });
