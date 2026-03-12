@@ -35,6 +35,7 @@ class ImageController(private val imageStorageService: ImageStorageService) {
 
     @Post("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Suppress("ReturnCount")
     fun upload(@Part file: CompletedFileUpload): HttpResponse<*> {
         if (file.size > MAX_FILE_SIZE)
             return HttpResponse.badRequest(ErrorResponse("Bad Request", "Image file size must not exceed 12 MB", 400))
@@ -45,7 +46,11 @@ class ImageController(private val imageStorageService: ImageStorageService) {
 
         val bytes = file.bytes
         val image = ImageIO.read(ByteArrayInputStream(bytes))
-            ?: return HttpResponse.badRequest(ErrorResponse("Bad Request", "Unsupported image format. Accepted: JPEG, PNG, GIF, TIFF, BMP, WEBP", 400))
+            ?: return HttpResponse.badRequest(ErrorResponse(
+                error = "Bad Request",
+                message = "Unsupported image format. Accepted: JPEG, PNG, GIF, TIFF, BMP, WEBP",
+                status = 400
+            ))
 
         if (image.width < MIN_DIMENSION || image.height < MIN_DIMENSION)
             return HttpResponse.badRequest(ErrorResponse("Bad Request", "Image dimensions must be at least 500 × 500 pixels", 400))

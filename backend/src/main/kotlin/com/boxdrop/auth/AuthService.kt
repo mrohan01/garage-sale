@@ -17,6 +17,7 @@ import java.time.Instant
 import java.util.UUID
 
 @Singleton
+@Suppress("LongParameterList", "TooManyFunctions")
 class AuthService(
     private val userRepository: UserRepository,
     private val verificationMethodRepository: VerificationMethodRepository,

@@ -18,6 +18,7 @@ abstract class SaleRepository : CrudRepository<Sale, UUID> {
                 ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography,
                 :startsAt, :endsAt, :status, :createdAt, :updatedAt)
     """)
+    @Suppress("LongParameterList")
     abstract fun insertSale(id: UUID, sellerId: UUID, title: String, description: String?,
                             address: String, latitude: Double, longitude: Double,
                             startsAt: Instant, endsAt: Instant, status: String,
@@ -30,6 +31,7 @@ abstract class SaleRepository : CrudRepository<Sale, UUID> {
         starts_at = :startsAt, ends_at = :endsAt, status = :status, updated_at = :updatedAt
         WHERE id = :id
     """)
+    @Suppress("LongParameterList")
     abstract fun updateSale(id: UUID, title: String, description: String?, address: String,
                             latitude: Double, longitude: Double, startsAt: Instant, endsAt: Instant,
                             status: String, updatedAt: Instant)

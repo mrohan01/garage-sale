@@ -12,6 +12,7 @@ import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Post
 
 @Controller("/api/auth")
+@Suppress("TooManyFunctions")
 class AuthController(private val authService: AuthService) {
 
     @Post("/register")

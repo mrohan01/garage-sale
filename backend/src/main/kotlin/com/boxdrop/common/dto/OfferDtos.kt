@@ -1,3 +1,4 @@
+@file:Suppress("MatchingDeclarationName")
 package com.boxdrop.common.dto
 
 import io.micronaut.serde.annotation.Serdeable

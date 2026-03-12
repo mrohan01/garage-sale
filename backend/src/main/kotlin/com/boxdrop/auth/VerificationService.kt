@@ -7,7 +7,7 @@ import com.warrenstrange.googleauth.GoogleAuthenticator
 import io.lettuce.core.api.StatefulRedisConnection
 import jakarta.inject.Singleton
 import java.security.SecureRandom
-import java.util.UUID
+import java.util.*
 
 data class ChallengeData(val userId: String, val email: String, val type: String)
 data class SmsSetupData(val userId: String, val phoneNumber: String)
@@ -34,7 +34,7 @@ class VerificationService(
     }
 
     fun generateAndStoreOtp(challengeId: String): String {
-        val code = String.format("%06d", secureRandom.nextInt(1000000))
+        val code = String.format(Locale.getDefault(), "%06d", secureRandom.nextInt(1000000))
         redisConnection.sync().setex("auth_otp:$challengeId", 600, code)
         return code
     }
