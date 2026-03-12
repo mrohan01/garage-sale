@@ -11,18 +11,25 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useThread, useSendMessage } from '../../hooks';
+import { useQueryClient } from '@tanstack/react-query';
+import { useThread, useSendMessage, useAcceptOffer, useRejectOffer, useCounterOffer } from '../../hooks';
 import { colors } from '../../theme';
 import { useAuthStore } from '../../stores/useAuthStore';
-import type { Message, ProfileStackParamList } from '../../types';
+import type { Message, MessagesStackParamList } from '../../types';
 
-type Props = NativeStackScreenProps<ProfileStackParamList, 'Chat'>;
+type Props = NativeStackScreenProps<MessagesStackParamList, 'Chat'>;
 
 export function ChatScreen({ route, navigation }: Props) {
   const { threadId, listingTitle } = route.params;
   const [text, setText] = useState('');
+  const [counterAmount, setCounterAmount] = useState('');
+  const [counteringOfferId, setCounteringOfferId] = useState<string | null>(null);
   const flatListRef = useRef<FlatList<Message>>(null);
   const currentUserId = useAuthStore((s) => s.user?.id);
+  const queryClient = useQueryClient();
+  const { mutate: accept } = useAcceptOffer();
+  const { mutate: reject } = useRejectOffer();
+  const { mutate: counter } = useCounterOffer();
 
   const { data: thread, isLoading, isError, error } = useThread(threadId);
   const { mutate: sendMessage, isPending: isSending } = useSendMessage();
@@ -51,6 +58,83 @@ export function ChatScreen({ route, navigation }: Props) {
 
   const renderMessage = ({ item }: { item: Message }) => {
     const isOwn = item.senderId === currentUserId;
+
+    if (item.offer) {
+      const canAct = item.offer.status === 'PENDING' && !isOwn;
+      const statusColor = item.offer.status === 'ACCEPTED' ? colors.success
+        : item.offer.status === 'REJECTED' ? colors.error
+        : item.offer.status === 'SUPERSEDED' ? colors.textMuted
+        : colors.primary;
+
+      return (
+        <View style={[styles.offerCard, isOwn ? styles.ownOffer : styles.otherOffer]}>
+          <Text style={styles.offerLabel}>
+            {isOwn ? 'You offered' : 'Offer received'}
+          </Text>
+          <Text style={styles.offerAmount}>${item.offer.amount.toFixed(2)}</Text>
+          <View style={[styles.offerStatusBadge, { backgroundColor: statusColor + '20' }]}>
+            <Text style={[styles.offerStatusText, { color: statusColor }]}>
+              {item.offer.status}
+            </Text>
+          </View>
+          {canAct && (
+            <View style={styles.offerActions}>
+              <TouchableOpacity
+                style={styles.acceptBtn}
+                onPress={() => accept(item.offer!.id, {
+                  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['threads'] }),
+                })}
+              >
+                <Text style={styles.acceptBtnText}>Accept</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.rejectBtn}
+                onPress={() => reject(item.offer!.id, {
+                  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['threads'] }),
+                })}
+              >
+                <Text style={styles.rejectBtnText}>Reject</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.counterBtn}
+                onPress={() => setCounteringOfferId(item.offer!.id)}
+              >
+                <Text style={styles.counterBtnText}>Counter</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {counteringOfferId === item.offer.id && (
+            <View style={styles.counterInput}>
+              <TextInput
+                style={styles.counterField}
+                placeholder="Amount"
+                keyboardType="decimal-pad"
+                value={counterAmount}
+                onChangeText={setCounterAmount}
+              />
+              <TouchableOpacity
+                style={styles.counterSubmit}
+                onPress={() => {
+                  const amt = parseFloat(counterAmount);
+                  if (!amt || amt <= 0) return;
+                  counter({ offerId: item.offer!.id, data: { amount: amt } }, {
+                    onSuccess: () => {
+                      setCounteringOfferId(null);
+                      setCounterAmount('');
+                    },
+                  });
+                }}
+              >
+                <Text style={styles.counterSubmitText}>Send</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          <Text style={[styles.messageTime, isOwn ? styles.ownTime : styles.otherTime]}>
+            {formatTime(item.createdAt)}
+          </Text>
+        </View>
+      );
+    }
 
     return (
       <View
@@ -247,4 +331,30 @@ const styles = StyleSheet.create({
     color: '#DC2626',
     textAlign: 'center',
   },
+  offerCard: {
+    maxWidth: '85%',
+    borderRadius: 16,
+    padding: 16,
+    marginVertical: 4,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+  },
+  ownOffer: { alignSelf: 'flex-end' },
+  otherOffer: { alignSelf: 'flex-start' },
+  offerLabel: { fontSize: 12, color: colors.textMuted, marginBottom: 4 },
+  offerAmount: { fontSize: 24, fontWeight: '700', color: colors.primary, marginBottom: 8 },
+  offerStatusBadge: { alignSelf: 'flex-start', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 4, marginBottom: 8 },
+  offerStatusText: { fontSize: 11, fontWeight: '700', textTransform: 'uppercase' },
+  offerActions: { flexDirection: 'row', gap: 8, marginBottom: 8 },
+  acceptBtn: { backgroundColor: colors.success, borderRadius: 8, paddingVertical: 8, paddingHorizontal: 14 },
+  acceptBtnText: { color: '#fff', fontSize: 13, fontWeight: '600' },
+  rejectBtn: { backgroundColor: colors.error, borderRadius: 8, paddingVertical: 8, paddingHorizontal: 14 },
+  rejectBtnText: { color: '#fff', fontSize: 13, fontWeight: '600' },
+  counterBtn: { borderWidth: 1, borderColor: colors.primary, borderRadius: 8, paddingVertical: 8, paddingHorizontal: 14 },
+  counterBtnText: { color: colors.primary, fontSize: 13, fontWeight: '600' },
+  counterInput: { flexDirection: 'row', gap: 8, marginBottom: 8 },
+  counterField: { flex: 1, borderWidth: 1, borderColor: colors.border, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8, fontSize: 16, color: colors.textPrimary },
+  counterSubmit: { backgroundColor: colors.primary, borderRadius: 8, paddingHorizontal: 16, justifyContent: 'center' },
+  counterSubmitText: { color: '#fff', fontSize: 14, fontWeight: '600' },
 });

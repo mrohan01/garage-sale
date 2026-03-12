@@ -7,6 +7,7 @@ import {
   updateSale,
   deleteSale,
   activateSale,
+  endSale,
 } from '../services/api';
 import type { CreateSaleRequest, UpdateSaleRequest } from '../types';
 
@@ -88,6 +89,18 @@ export function useActivateSale() {
 
   return useMutation({
     mutationFn: (id: string) => activateSale(id),
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({ queryKey: saleKeys.all });
+      queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });
+    },
+  });
+}
+
+export function useEndSale() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => endSale(id),
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: saleKeys.all });
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });

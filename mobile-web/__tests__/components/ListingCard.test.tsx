@@ -68,4 +68,23 @@ describe('ListingCard', () => {
     );
     expect(getByText('No Photo')).toBeTruthy();
   });
+
+  it('renders rightAction when provided', () => {
+    const { Text } = require('react-native');
+    const { getByText } = render(
+      <ListingCard
+        listing={mockListing}
+        onPress={() => {}}
+        rightAction={<Text>Unsave</Text>}
+      />,
+    );
+    expect(getByText('Unsave')).toBeTruthy();
+  });
+
+  it('does not render rightAction area when not provided', () => {
+    const { queryByText } = render(
+      <ListingCard listing={mockListing} onPress={() => {}} />,
+    );
+    expect(queryByText('Unsave')).toBeNull();
+  });
 });

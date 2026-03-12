@@ -12,6 +12,9 @@ import {
   SavedItem,
   UserProfile,
   AuthResponse,
+  LoginStartResponse,
+  VerificationMethod,
+  TotpSetupResponse,
   CreateSaleRequest,
   UpdateSaleRequest,
   CreateListingRequest,
@@ -23,11 +26,12 @@ import {
   SendMessageRequest,
   CreateReviewRequest,
   CreateReportRequest,
+  CreateOfferRequest,
+  CounterOfferRequest,
+  CreateOfferResponse,
+  OfferResponse,
   SearchParams,
-  LoginRequest,
-  RegisterRequest,
   RefreshRequest,
-  ChangePasswordRequest,
 } from '../types';
 
 const api = axios.create({
@@ -99,8 +103,8 @@ api.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      const { accessToken: newToken } = await refreshToken({ refreshToken: storedRefreshToken });
-      useAuthStore.getState().setTokens(newToken, storedRefreshToken);
+      const { accessToken: newToken, userId } = await refreshToken({ refreshToken: storedRefreshToken });
+      useAuthStore.getState().setTokens(newToken, storedRefreshToken, userId);
       processQueue(null, newToken);
       originalRequest.headers.Authorization = `Bearer ${newToken}`;
       return api(originalRequest);
@@ -116,13 +120,27 @@ api.interceptors.response.use(
 
 // --- Auth ---
 
-export async function login(payload: LoginRequest): Promise<AuthResponse> {
-  const { data } = await api.post<ApiResponse<AuthResponse>>('/auth/login', payload);
+export async function loginStart(email: string): Promise<LoginStartResponse> {
+  const { data } = await api.post<ApiResponse<LoginStartResponse>>('/auth/login/start', { email });
   return data.data;
 }
 
-export async function register(payload: RegisterRequest): Promise<AuthResponse> {
-  const { data } = await api.post<ApiResponse<AuthResponse>>('/auth/register', payload);
+export async function loginSendCode(challengeId: string, method: string): Promise<void> {
+  await api.post('/auth/login/send-code', { challengeId, method });
+}
+
+export async function loginVerify(challengeId: string, method: string, code: string): Promise<AuthResponse> {
+  const { data } = await api.post<ApiResponse<AuthResponse>>('/auth/login/verify', { challengeId, method, code });
+  return data.data;
+}
+
+export async function register(email: string, displayName: string): Promise<{ challengeId: string }> {
+  const { data } = await api.post<ApiResponse<{ challengeId: string }>>('/auth/register', { email, displayName });
+  return data.data;
+}
+
+export async function registerVerify(challengeId: string, code: string): Promise<AuthResponse> {
+  const { data } = await api.post<ApiResponse<AuthResponse>>('/auth/register/verify', { challengeId, code });
   return data.data;
 }
 
@@ -131,8 +149,31 @@ export async function refreshToken(payload: RefreshRequest): Promise<AuthRespons
   return data.data;
 }
 
-export async function changePassword(payload: ChangePasswordRequest): Promise<void> {
-  await api.post('/auth/change-password', payload);
+export async function getVerificationMethods(): Promise<VerificationMethod[]> {
+  const { data } = await api.get<ApiResponse<VerificationMethod[]>>('/auth/methods');
+  return data.data;
+}
+
+export async function setupTotp(): Promise<TotpSetupResponse> {
+  const { data } = await api.post<ApiResponse<TotpSetupResponse>>('/auth/methods/totp/setup');
+  return data.data;
+}
+
+export async function confirmTotp(code: string): Promise<void> {
+  await api.post('/auth/methods/totp/confirm', { code });
+}
+
+export async function setupSms(phoneNumber: string): Promise<{ challengeId: string }> {
+  const { data } = await api.post<ApiResponse<{ challengeId: string }>>('/auth/methods/sms/setup', { phoneNumber });
+  return data.data;
+}
+
+export async function confirmSms(challengeId: string, code: string): Promise<void> {
+  await api.post('/auth/methods/sms/confirm', { challengeId, code });
+}
+
+export async function removeVerificationMethod(type: string): Promise<void> {
+  await api.delete(`/auth/methods/${type}`);
 }
 
 // --- User ---
@@ -151,7 +192,7 @@ export async function updateMe(payload: UpdateProfileRequest): Promise<UserProfi
 
 export async function getSales(): Promise<Sale[]> {
   const { data } = await api.get<ApiResponse<Sale[]>>('/sales');
-  return data.data;
+  return data.data ?? [];
 }
 
 export async function getSale(id: string): Promise<Sale> {
@@ -163,7 +204,7 @@ export async function getNearbySales(lat: number, lng: number, radiusKm: number)
   const { data } = await api.get<ApiResponse<Sale[]>>('/sales/nearby', {
     params: { lat, lng, radiusKm },
   });
-  return data.data;
+  return data.data ?? [];
 }
 
 export async function createSale(payload: CreateSaleRequest): Promise<Sale> {
@@ -185,11 +226,16 @@ export async function activateSale(id: string): Promise<Sale> {
   return data.data;
 }
 
+export async function endSale(id: string): Promise<Sale> {
+  const { data } = await api.post<ApiResponse<Sale>>(`/sales/${id}/end`);
+  return data.data;
+}
+
 // --- Listings ---
 
 export async function getListings(saleId: string): Promise<Listing[]> {
   const { data } = await api.get<ApiResponse<Listing[]>>(`/sales/${saleId}/listings`);
-  return data.data;
+  return data.data ?? [];
 }
 
 export async function getListing(id: string): Promise<Listing> {
@@ -209,6 +255,11 @@ export async function updateListing(id: string, payload: UpdateListingRequest): 
 
 export async function deleteListing(id: string): Promise<void> {
   await api.delete(`/listings/${id}`);
+}
+
+export async function updateListingStatus(id: string, status: string): Promise<Listing> {
+  const { data } = await api.put<ApiResponse<Listing>>(`/listings/${id}/status`, { status });
+  return data.data;
 }
 
 // --- Search ---
@@ -244,7 +295,7 @@ export async function getMapListings(
 
 export async function getTransactions(): Promise<Transaction[]> {
   const { data } = await api.get<ApiResponse<Transaction[]>>('/transactions');
-  return data.data;
+  return data.data ?? [];
 }
 
 export async function getTransaction(id: string): Promise<Transaction> {
@@ -276,7 +327,7 @@ export async function cancelTransaction(id: string): Promise<Transaction> {
 
 export async function getThreads(): Promise<MessageThread[]> {
   const { data } = await api.get<ApiResponse<MessageThread[]>>('/messages/threads');
-  return data.data;
+  return data.data ?? [];
 }
 
 export async function getThread(id: string): Promise<ThreadDetail> {
@@ -296,6 +347,11 @@ export async function sendMessage(threadId: string, payload: SendMessageRequest)
 
 // --- Images ---
 
+export const IMAGE_MAX_FILE_SIZE = 12 * 1024 * 1024; // 12 MB
+export const IMAGE_MIN_DIMENSION = 500; // px
+export const IMAGE_MAX_DIMENSION = 9000; // px
+export const IMAGE_ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/bmp', 'image/webp'];
+
 export async function uploadImage(formData: FormData): Promise<string> {
   const { data } = await api.post<ApiResponse<string>>('/images/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
@@ -305,9 +361,9 @@ export async function uploadImage(formData: FormData): Promise<string> {
 
 // --- Saved ---
 
-export async function getSavedListings(): Promise<SavedItem[]> {
-  const { data } = await api.get<ApiResponse<SavedItem[]>>('/saved');
-  return data.data;
+export async function getSavedListings(): Promise<Listing[]> {
+  const { data } = await api.get<ApiResponse<Listing[]>>('/saved');
+  return data.data ?? [];
 }
 
 export async function saveListing(listingId: string): Promise<void> {
@@ -334,6 +390,28 @@ export async function createReview(payload: CreateReviewRequest): Promise<Review
 
 export async function createReport(payload: CreateReportRequest): Promise<void> {
   await api.post('/reports', payload);
+}
+
+// --- Offers ---
+
+export async function createOffer(payload: CreateOfferRequest): Promise<CreateOfferResponse> {
+  const { data } = await api.post<ApiResponse<CreateOfferResponse>>('/offers', payload);
+  return data.data;
+}
+
+export async function acceptOffer(offerId: string): Promise<OfferResponse> {
+  const { data } = await api.post<ApiResponse<OfferResponse>>(`/offers/${offerId}/accept`);
+  return data.data;
+}
+
+export async function rejectOffer(offerId: string): Promise<OfferResponse> {
+  const { data } = await api.post<ApiResponse<OfferResponse>>(`/offers/${offerId}/reject`);
+  return data.data;
+}
+
+export async function counterOffer(offerId: string, payload: CounterOfferRequest): Promise<CreateOfferResponse> {
+  const { data } = await api.post<ApiResponse<CreateOfferResponse>>(`/offers/${offerId}/counter`, payload);
+  return data.data;
 }
 
 export default api;

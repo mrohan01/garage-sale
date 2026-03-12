@@ -14,6 +14,7 @@ data class ConfirmPickupRequest(val token: String)
 data class TransactionResponse(
     val id: String,
     val listingId: String,
+    val listingTitle: String?,
     val buyerId: String,
     val sellerId: String,
     val amount: BigDecimal,

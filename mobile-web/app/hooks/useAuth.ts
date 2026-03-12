@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getMe, updateMe, changePassword } from '../services/api';
+import { getMe, updateMe } from '../services/api';
 import { useAuthStore } from '../stores/useAuthStore';
-import type { UpdateProfileRequest, ChangePasswordRequest } from '../types';
+import type { UpdateProfileRequest } from '../types';
 
 export const userKeys = {
   me: ['user', 'me'] as const,
@@ -26,11 +26,5 @@ export function useUpdateProfile() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.me });
     },
-  });
-}
-
-export function useChangePassword() {
-  return useMutation({
-    mutationFn: (data: ChangePasswordRequest) => changePassword(data),
   });
 }

@@ -11,9 +11,9 @@ import {
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useThreads } from '../../hooks';
 import { colors } from '../../theme';
-import type { MessageThread, ProfileStackParamList } from '../../types';
+import type { MessageThread, MessagesStackParamList } from '../../types';
 
-type Props = NativeStackScreenProps<ProfileStackParamList, 'Inbox'>;
+type Props = NativeStackScreenProps<MessagesStackParamList, 'Inbox'>;
 
 export function InboxScreen({ navigation }: Props) {
   const { data: threads, isLoading, isError, error, refetch } = useThreads();
@@ -101,11 +101,11 @@ export function InboxScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <FlatList
-        data={threads}
+        data={threads ?? []}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         contentContainerStyle={
-          threads?.length === 0 ? styles.emptyContainer : undefined
+          (threads ?? []).length === 0 ? styles.emptyContainer : undefined
         }
         ListEmptyComponent={
           <View style={styles.emptyState}>

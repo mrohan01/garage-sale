@@ -68,7 +68,7 @@ export function ClaimScreen({ route, navigation }: Props) {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate('MyTransactions')}
+            onPress={() => (navigation as any).getParent()?.navigate('ProfileTab', { screen: 'MyTransactions' })}
           >
             <Text style={styles.buttonText}>View My Transactions</Text>
           </TouchableOpacity>

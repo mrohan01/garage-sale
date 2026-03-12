@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   FlatList,
   StyleSheet,
@@ -10,21 +10,42 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useListings, useCreateListing } from '../../hooks';
 import { colors } from '../../theme';
 import { ListingCard, DraftItemForm, EmptyState } from '../../components';
-import type { CreateSaleStackParamList, CreateListingRequest } from '../../types';
+import type { MySalesStackParamList, CreateListingRequest } from '../../types';
 
-type Props = NativeStackScreenProps<CreateSaleStackParamList, 'AddListings'>;
+type Props = NativeStackScreenProps<MySalesStackParamList, 'AddListings'>;
 
 export function AddListingsScreen({ route, navigation }: Props) {
-  const { saleId } = route.params;
+  const { saleId, relistItems } = route.params;
   const { data: listings, isLoading } = useListings(saleId);
   const { mutate: createListing, isPending } = useCreateListing();
+  const relistProcessed = useRef(false);
+
+  useEffect(() => {
+    if (relistItems?.length && !relistProcessed.current) {
+      relistProcessed.current = true;
+      for (const item of relistItems) {
+        createListing({
+          saleId,
+          data: {
+            title: item.title,
+            description: item.description,
+            startingPrice: item.startingPrice,
+            minimumPrice: item.minimumPrice,
+            category: item.category,
+            condition: item.condition,
+            imageUrls: item.imageUrls,
+          },
+        });
+      }
+    }
+  }, [relistItems, saleId, createListing]);
 
   const handleAddItem = (data: CreateListingRequest) => {
     createListing({ saleId, data });
   };
 
   const handleDone = () => {
-    navigation.navigate('SaleDetail', { saleId });
+    navigation.navigate('ManageSale', { saleId });
   };
 
   return (

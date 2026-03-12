@@ -45,6 +45,9 @@ data class ListingResponse(
 data class ListingImageResponse(val id: String, val imageUrl: String, val sortOrder: Int)
 
 @Serdeable
+data class UpdateListingStatusRequest(val status: String)
+
+@Serdeable
 data class MapListingResponse(
     val id: String,
     val lat: Double,

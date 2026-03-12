@@ -112,6 +112,7 @@ export interface Message {
   content: string;
   createdAt: string;
   readAt: string | null;
+  offer?: OfferResponse;
 }
 
 export interface ThreadDetail {
@@ -145,15 +146,29 @@ export interface AuthResponse {
 
 // Request DTOs
 
-export interface LoginRequest {
+export interface LoginStartRequest {
   email: string;
-  password: string;
 }
 
 export interface RegisterRequest {
   email: string;
-  password: string;
   displayName: string;
+}
+
+export interface LoginStartResponse {
+  challengeId: string;
+  methods: string[];
+}
+
+export interface VerificationMethod {
+  type: string;
+  enabled: boolean;
+  hasPhoneNumber: boolean;
+}
+
+export interface TotpSetupResponse {
+  secret: string;
+  qrUri: string;
 }
 
 export interface RefreshRequest {
@@ -203,11 +218,6 @@ export interface UpdateProfileRequest {
   address?: string;
 }
 
-export interface ChangePasswordRequest {
-  currentPassword: string;
-  newPassword: string;
-}
-
 export interface ClaimListingRequest {
   listingId: string;
 }
@@ -236,6 +246,30 @@ export interface CreateReportRequest {
   targetType: 'USER' | 'LISTING' | 'MESSAGE';
   targetId: string;
   reason: string;
+}
+
+export interface OfferResponse {
+  id: string;
+  listingId: string;
+  amount: number;
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'SUPERSEDED';
+  previousOfferId: string | null;
+  createdAt: string;
+  respondedAt: string | null;
+}
+
+export interface CreateOfferRequest {
+  listingId: string;
+  amount: number;
+}
+
+export interface CounterOfferRequest {
+  amount: number;
+}
+
+export interface CreateOfferResponse {
+  thread: MessageThread;
+  offer: OfferResponse;
 }
 
 export interface SearchParams {
@@ -275,6 +309,17 @@ export interface ApiError {
 export type AuthStackParamList = {
   Login: undefined;
   Register: undefined;
+  VerifyCode: {
+    challengeId: string;
+    method: string;
+    email: string;
+    flow: 'login' | 'register';
+  };
+  MethodPicker: {
+    challengeId: string;
+    methods: string[];
+    email: string;
+  };
 };
 
 export type HomeStackParamList = {
@@ -290,28 +335,45 @@ export type MapStackParamList = {
   ListingDetail: { listingId: string };
 };
 
-export type CreateSaleStackParamList = {
-  CreateSale: undefined;
-  AddListings: { saleId: string };
-  SaleDetail: { saleId: string };
+export type RelistItem = {
+  title: string;
+  description?: string;
+  startingPrice: number;
+  minimumPrice: number;
+  category: string;
+  condition?: ListingCondition;
+  imageUrls?: string[];
 };
 
-export type SavedStackParamList = {
-  Saved: undefined;
+export type MySalesStackParamList = {
+  MySalesList: undefined;
+  CreateSale: {
+    relistTitle?: string;
+    relistDescription?: string;
+    relistAddress?: string;
+    relistItems?: RelistItem[];
+  } | undefined;
+  AddListings: { saleId: string; relistItems?: RelistItem[] };
+  ManageSale: { saleId: string };
   ListingDetail: { listingId: string };
+};
+
+export type MessagesStackParamList = {
+  Inbox: undefined;
+  Chat: { threadId: string; listingTitle?: string };
 };
 
 export type ProfileStackParamList = {
   Profile: undefined;
-  MySales: undefined;
   MyTransactions: undefined;
-  Inbox: undefined;
-  Chat: { threadId: string; listingTitle?: string };
+  Saved: undefined;
+  ListingDetail: { listingId: string };
   EditProfile: undefined;
-  ChangePassword: undefined;
+  SecuritySettings: undefined;
+  TOTPSetup: undefined;
+  SMSSetup: undefined;
   Settings: undefined;
   SaleDetail: { saleId: string };
-  ListingDetail: { listingId: string };
 };
 
 // Constants

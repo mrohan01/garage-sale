@@ -36,6 +36,10 @@ class SaleController(private val saleService: SaleService) {
     fun activate(request: HttpRequest<*>, @PathVariable id: UUID): HttpResponse<ApiResponse<SaleResponse>> =
         HttpResponse.ok(ApiResponse(saleService.activate(id, request.userId())))
 
+    @Post("/{id}/end")
+    fun end(request: HttpRequest<*>, @PathVariable id: UUID): HttpResponse<ApiResponse<SaleResponse>> =
+        HttpResponse.ok(ApiResponse(saleService.endSale(id, request.userId())))
+
     @Get("/nearby")
     fun findNearby(
         @QueryValue lat: Double, @QueryValue lng: Double,

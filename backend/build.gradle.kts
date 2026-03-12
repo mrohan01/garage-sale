@@ -44,6 +44,7 @@ dependencies {
     implementation("com.stripe:stripe-java:25.0.0")
     implementation("io.projectreactor:reactor-core")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.warrenstrange:googleauth:1.5.0")
 
     runtimeOnly("org.postgresql:postgresql:42.7.2")
     runtimeOnly("org.yaml:snakeyaml")

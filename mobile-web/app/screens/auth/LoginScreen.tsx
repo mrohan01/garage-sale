@@ -4,40 +4,57 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  Alert,
   Image,
 } from 'react-native';
 import { TextInput, Button, Text, HelperText } from 'react-native-paper';
 import { useForm, Controller } from 'react-hook-form';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../types';
-import { useAuthStore } from '../../stores/useAuthStore';
+import { loginStart, loginSendCode } from '../../services/api';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
 interface LoginFormData {
   email: string;
-  password: string;
 }
 
 export function LoginScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(false);
-  const login = useAuthStore((state) => state.login);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormData>({
-    defaultValues: { email: '', password: '' },
+    defaultValues: { email: '' },
   });
 
   const onSubmit = async (data: LoginFormData) => {
     setLoading(true);
+    setLoginError(null);
     try {
-      await login(data.email, data.password);
+      const result = await loginStart(data.email);
+      if (result.methods.length === 1) {
+        const method = result.methods[0];
+        if (method !== 'TOTP') {
+          await loginSendCode(result.challengeId, method);
+        }
+        navigation.navigate('VerifyCode', {
+          challengeId: result.challengeId,
+          method,
+          email: data.email,
+          flow: 'login',
+        });
+      } else {
+        navigation.navigate('MethodPicker', {
+          challengeId: result.challengeId,
+          methods: result.methods,
+          email: data.email,
+        });
+      }
     } catch (error: any) {
-      Alert.alert('Login Failed', error.message ?? 'An unexpected error occurred.');
+      setLoginError(error.response?.data?.message ?? error.message ?? 'An unexpected error occurred.');
     } finally {
       setLoading(false);
     }
@@ -83,28 +100,7 @@ export function LoginScreen({ navigation }: Props) {
         />
         <HelperText type="error" visible={!!errors.email}>{errors.email?.message}</HelperText>
 
-        <Controller
-          control={control}
-          name="password"
-          rules={{ required: 'Password is required' }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              testID="login-password"
-              mode="flat"
-              label="Password"
-              secureTextEntry
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              error={!!errors.password}
-              style={styles.input}
-              textColor="#FFFFFF"
-              placeholderTextColor="rgba(255,255,255,0.4)"
-              theme={{ colors: { onSurfaceVariant: 'rgba(255,255,255,0.5)', primary: '#F4A261', surfaceVariant: 'rgba(255,255,255,0.12)' } }}
-            />
-          )}
-        />
-        <HelperText type="error" visible={!!errors.password}>{errors.password?.message}</HelperText>
+        <HelperText type="error" visible={!!loginError} style={styles.loginError}>{loginError}</HelperText>
 
         <Button
           testID="login-submit"
@@ -116,7 +112,7 @@ export function LoginScreen({ navigation }: Props) {
           contentStyle={styles.buttonContent}
           labelStyle={styles.buttonText}
         >
-          Log In
+          Continue
         </Button>
 
         <Button
@@ -175,6 +171,10 @@ const styles = StyleSheet.create({
   },
   linkText: {
     color: 'rgba(255,255,255,0.6)',
+    fontSize: 14,
+  },
+  loginError: {
+    textAlign: 'center',
     fontSize: 14,
   },
   linkBold: {

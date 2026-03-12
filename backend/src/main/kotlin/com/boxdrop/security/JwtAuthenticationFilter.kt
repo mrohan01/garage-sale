@@ -15,7 +15,10 @@ class JwtAuthenticationFilter(private val jwtService: JwtService) : HttpServerFi
 
     private val publicPaths = setOf(
         "/api/auth/register",
-        "/api/auth/login",
+        "/api/auth/register/verify",
+        "/api/auth/login/start",
+        "/api/auth/login/send-code",
+        "/api/auth/login/verify",
         "/api/auth/refresh",
         "/api/webhooks/stripe"
     )
@@ -25,12 +28,12 @@ class JwtAuthenticationFilter(private val jwtService: JwtService) : HttpServerFi
             return chain.proceed(request)
         }
         val authHeader = request.headers.authorization.orElse(null)
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return Mono.just(HttpResponse.unauthorized<Any>())
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            val userId = jwtService.validateToken(authHeader.substring(7))
+            if (userId != null) {
+                request.setAttribute("userId", userId)
+            }
         }
-        val userId = jwtService.validateToken(authHeader.substring(7))
-            ?: return Mono.just(HttpResponse.unauthorized<Any>())
-        request.setAttribute("userId", userId)
         return chain.proceed(request)
     }
 }

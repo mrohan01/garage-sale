@@ -3,8 +3,11 @@ import {
   Dimensions,
   FlatList,
   Image,
+  Modal,
+  Pressable,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import { ListingImage } from '../types';
@@ -18,6 +21,7 @@ interface PhotoCarouselProps {
 
 export const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ images }) => {
   const [activeIndex, setActiveIndex] = React.useState(0);
+  const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
 
   if (images.length === 0) {
     return (
@@ -40,7 +44,9 @@ export const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ images }) => {
           setActiveIndex(index);
         }}
         renderItem={({ item }) => (
-          <Image source={{ uri: item.imageUrl }} style={styles.image} resizeMode="cover" />
+          <TouchableOpacity activeOpacity={0.9} onPress={() => setSelectedImage(item.imageUrl)}>
+            <Image source={{ uri: item.imageUrl }} style={styles.image} resizeMode="cover" />
+          </TouchableOpacity>
         )}
       />
       {images.length > 1 && (
@@ -53,6 +59,18 @@ export const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ images }) => {
           ))}
         </View>
       )}
+      <Modal visible={selectedImage !== null} transparent animationType="fade">
+        <Pressable style={styles.modalOverlay} onPress={() => setSelectedImage(null)}>
+          <Image
+            source={{ uri: selectedImage! }}
+            style={styles.fullscreenImage}
+            resizeMode="contain"
+          />
+          <TouchableOpacity style={styles.closeButton} onPress={() => setSelectedImage(null)}>
+            <Text style={styles.closeButtonText}>✕</Text>
+          </TouchableOpacity>
+        </Pressable>
+      </Modal>
     </View>
   );
 };
@@ -60,11 +78,11 @@ export const PhotoCarousel: React.FC<PhotoCarouselProps> = ({ images }) => {
 const styles = StyleSheet.create({
   image: {
     width: SCREEN_WIDTH,
-    height: SCREEN_WIDTH * 0.75,
+    height: SCREEN_WIDTH * 0.6,
   },
   placeholder: {
     width: SCREEN_WIDTH,
-    height: SCREEN_WIDTH * 0.75,
+    height: 160,
     backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
@@ -91,5 +109,24 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.95)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullscreenImage: {
+    width: '100%',
+    height: '100%',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+  },
+  closeButtonText: {
+    color: '#FFFFFF',
+    fontSize: 28,
   },
 });

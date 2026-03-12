@@ -37,5 +37,3 @@ data class UserProfileResponse(
 @Serdeable
 data class UpdateProfileRequest(val displayName: String?, val avatarUrl: String?, val address: String?)
 
-@Serdeable
-data class ChangePasswordRequest(val currentPassword: String, val newPassword: String)

@@ -34,7 +34,20 @@ export function useUnsaveListing() {
 
   return useMutation({
     mutationFn: (listingId: string) => unsaveListing(listingId),
-    onSuccess: () => {
+    onMutate: async (listingId) => {
+      await queryClient.cancelQueries({ queryKey: savedKeys.list() });
+      const previous = queryClient.getQueryData(savedKeys.list());
+      queryClient.setQueryData(savedKeys.list(), (old: any[] | undefined) =>
+        old ? old.filter((item) => item.id !== listingId) : [],
+      );
+      return { previous };
+    },
+    onError: (_err, _listingId, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(savedKeys.list(), context.previous);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: savedKeys.all });
     },
   });

@@ -8,6 +8,11 @@
 - [ ] Set up Apple Developer account credentials for iOS builds
 - [ ] Set up Google Play Console credentials for Android builds
 
+### Authentication Service Keys
+- [ ] **Resend (email OTP):** Sign up at [resend.com](https://resend.com), get an API key, set `RESEND_API_KEY`. Optionally set `RESEND_FROM_EMAIL` (defaults to `onboarding@resend.dev` sandbox sender). Verify a custom domain in Resend for production use.
+- [ ] **Twilio (SMS OTP):** Sign up at [twilio.com](https://www.twilio.com/try-twilio), get Account SID, Auth Token, and a phone number. Set `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, and `TWILIO_FROM_NUMBER`. Free trial has no time limit (credit-based).
+- [ ] **TOTP (Authenticator apps):** No API keys needed — works offline using the `googleauth` library with time-based shared secrets.
+
 ### API URL Configuration
 - [ ] Deploy backend to a production host
 - [ ] Set `EXPO_PUBLIC_API_URL` to the production backend URL (currently defaults to `http://localhost:8080`, which is unreachable from physical devices)

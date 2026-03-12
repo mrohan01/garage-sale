@@ -43,6 +43,7 @@ export const DraftItemForm: React.FC<DraftItemFormProps> = ({ onSubmit, loading 
           <TextInput
             mode="outlined"
             label="Item title *"
+            placeholder="Item title"
             value={value}
             onChangeText={onChange}
             onBlur={onBlur}
@@ -61,6 +62,7 @@ export const DraftItemForm: React.FC<DraftItemFormProps> = ({ onSubmit, loading 
           <TextInput
             mode="outlined"
             label="Category *"
+            placeholder="Category"
             value={value}
             onChangeText={onChange}
             onBlur={onBlur}
@@ -79,6 +81,7 @@ export const DraftItemForm: React.FC<DraftItemFormProps> = ({ onSubmit, loading 
             <TextInput
               mode="outlined"
               label="Starting price *"
+              placeholder="Starting price"
               value={value ? String(value) : ''}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -95,6 +98,7 @@ export const DraftItemForm: React.FC<DraftItemFormProps> = ({ onSubmit, loading 
             <TextInput
               mode="outlined"
               label="Min price"
+              placeholder="Min price"
               value={value ? String(value) : ''}
               onChangeText={onChange}
               onBlur={onBlur}

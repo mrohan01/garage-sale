@@ -7,9 +7,10 @@ import { Listing } from '../types';
 interface ListingCardProps {
   listing: Listing;
   onPress: () => void;
+  rightAction?: React.ReactNode;
 }
 
-export const ListingCard: React.FC<ListingCardProps> = ({ listing, onPress }) => {
+export const ListingCard: React.FC<ListingCardProps> = ({ listing, onPress, rightAction }) => {
   const hasDiscount = listing.currentPrice < listing.startingPrice;
   const imageUrl = listing.images?.[0]?.imageUrl;
 
@@ -25,18 +26,23 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onPress }) =>
         )}
       </View>
       <Card.Content style={styles.info}>
-        <Text variant="titleSmall" style={styles.title} numberOfLines={1}>
-          {listing.title}
-        </Text>
-        <View style={styles.priceRow}>
-          <Text style={[styles.price, hasDiscount && styles.priceDecayed]}>
-            ${listing.currentPrice.toFixed(2)}
-          </Text>
-          {hasDiscount && (
-            <Text style={styles.originalPrice}>${listing.startingPrice.toFixed(2)}</Text>
-          )}
+        <View style={styles.infoRow}>
+          <View style={styles.infoText}>
+            <Text variant="titleSmall" style={styles.title} numberOfLines={1}>
+              {listing.title}
+            </Text>
+            <View style={styles.priceRow}>
+              <Text style={[styles.price, hasDiscount && styles.priceDecayed]}>
+                ${listing.currentPrice.toFixed(2)}
+              </Text>
+              {hasDiscount && (
+                <Text style={styles.originalPrice}>${listing.startingPrice.toFixed(2)}</Text>
+              )}
+            </View>
+            <Text variant="labelSmall" style={styles.category}>{listing.category}</Text>
+          </View>
+          {rightAction && <View style={styles.rightAction}>{rightAction}</View>}
         </View>
-        <Text variant="labelSmall" style={styles.category}>{listing.category}</Text>
       </Card.Content>
     </Card>
   );
@@ -47,12 +53,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     overflow: 'hidden',
     marginBottom: 12,
-    flex: 1,
+    width: '48%',
     marginHorizontal: 4,
   },
   imageContainer: {
     width: '100%',
-    aspectRatio: 1,
+    aspectRatio: 4 / 3,
   },
   image: {
     width: '100%',
@@ -71,6 +77,16 @@ const styles = StyleSheet.create({
   info: {
     paddingTop: 8,
     paddingBottom: 10,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  infoText: {
+    flex: 1,
+  },
+  rightAction: {
+    marginLeft: 8,
   },
   title: {
     color: colors.textPrimary,

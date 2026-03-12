@@ -17,9 +17,8 @@ interface MenuItem {
 
 const MENU_ITEMS: MenuItem[] = [
   { label: 'Edit Profile', icon: 'account-edit', route: 'EditProfile' },
-  { label: 'My Sales', icon: 'tag-multiple', route: 'MySales' },
   { label: 'My Transactions', icon: 'swap-horizontal-circle', route: 'MyTransactions' },
-  { label: 'Messages', icon: 'message-text', route: 'Inbox' },
+  { label: 'Saved Items', icon: 'heart', route: 'Saved' },
   { label: 'Settings', icon: 'cog', route: 'Settings' },
 ];
 

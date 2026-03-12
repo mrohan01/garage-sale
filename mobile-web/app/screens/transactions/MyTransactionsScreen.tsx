@@ -44,7 +44,7 @@ export function MyTransactionsScreen({ navigation }: Props) {
     <TouchableOpacity
       style={styles.card}
       onPress={() => {
-        // Navigate to detail or show pickup token for active transactions
+        navigation.navigate('ListingDetail', { listingId: item.listingId });
       }}
       activeOpacity={0.7}
     >
@@ -100,11 +100,11 @@ export function MyTransactionsScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <FlatList
-        data={transactions}
+        data={transactions ?? []}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         contentContainerStyle={
-          transactions?.length === 0 ? styles.emptyContainer : styles.list
+          (transactions ?? []).length === 0 ? styles.emptyContainer : styles.list
         }
         ListEmptyComponent={
           <View style={styles.emptyState}>

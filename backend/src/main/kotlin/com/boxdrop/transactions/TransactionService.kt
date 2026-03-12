@@ -47,6 +47,30 @@ class TransactionService(
         return toResponse(transaction)
     }
 
+    fun claimAtPrice(buyerId: UUID, listingId: UUID, amount: BigDecimal): TransactionResponse {
+        val listing = listingRepository.findById(listingId)
+            .orElseThrow { NotFoundException("Listing not found") }
+        if (listing.status != "AVAILABLE") throw BadRequestException("Listing is not available")
+
+        val active = transactionRepository.findByListingIdAndStatusIn(
+            listingId, listOf("CLAIMED", "PAYMENT_PENDING", "PAID"))
+        if (active.isNotEmpty()) throw BadRequestException("Listing already claimed")
+
+        val sale = saleRepository.findById(listing.saleId)
+            .orElseThrow { NotFoundException("Sale not found") }
+
+        val platformFee = amount.multiply(BigDecimal("0.10")).setScale(2, RoundingMode.HALF_UP)
+        val transaction = transactionRepository.save(Transaction(
+            id = UUID.randomUUID(), listingId = listingId, buyerId = buyerId,
+            sellerId = sale.sellerId, amount = amount, platformFee = platformFee,
+            status = "CLAIMED", pickupToken = generatePickupToken(), stripePaymentId = null,
+            claimedAt = Instant.now(), paidAt = null, confirmedAt = null,
+            completedAt = null, cancelledAt = null, createdAt = Instant.now()
+        ))
+        listingRepository.updateStatus(listingId, "CLAIMED")
+        return toResponse(transaction)
+    }
+
     fun confirmPayment(transactionId: UUID, buyerId: UUID): TransactionResponse {
         val t = transactionRepository.findById(transactionId)
             .orElseThrow { NotFoundException("Transaction not found") }
@@ -99,11 +123,15 @@ class TransactionService(
     private fun generatePickupToken(): String =
         (1..8).map { "ABCDEFGHJKLMNPQRSTUVWXYZ23456789".random() }.joinToString("")
 
-    private fun toResponse(t: Transaction) = TransactionResponse(
-        id = t.id.toString(), listingId = t.listingId.toString(), buyerId = t.buyerId.toString(),
-        sellerId = t.sellerId.toString(), amount = t.amount, platformFee = t.platformFee,
-        status = t.status, pickupToken = t.pickupToken, claimedAt = t.claimedAt,
-        paidAt = t.paidAt, confirmedAt = t.confirmedAt, completedAt = t.completedAt,
-        createdAt = t.createdAt
-    )
+    private fun toResponse(t: Transaction): TransactionResponse {
+        val listingTitle = runCatching { listingRepository.findById(t.listingId).orElse(null)?.title }.getOrNull()
+        return TransactionResponse(
+            id = t.id.toString(), listingId = t.listingId.toString(), listingTitle = listingTitle,
+            buyerId = t.buyerId.toString(), sellerId = t.sellerId.toString(),
+            amount = t.amount, platformFee = t.platformFee,
+            status = t.status, pickupToken = t.pickupToken, claimedAt = t.claimedAt,
+            paidAt = t.paidAt, confirmedAt = t.confirmedAt, completedAt = t.completedAt,
+            createdAt = t.createdAt
+        )
+    }
 }

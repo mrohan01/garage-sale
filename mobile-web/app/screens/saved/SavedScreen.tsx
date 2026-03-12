@@ -6,13 +6,14 @@ import {
   View,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Button } from 'react-native-paper';
 import { ListingCard, EmptyState, LoadingScreen } from '../../components';
 import { WebContentWrapper } from '../../components/WebContentWrapper';
-import { useSavedListings } from '../../hooks';
+import { useSavedListings, useUnsaveListing } from '../../hooks';
 import { colors } from '../../theme';
-import { SavedStackParamList } from '../../types';
+import { ProfileStackParamList } from '../../types';
 
-type Props = NativeStackScreenProps<SavedStackParamList, 'Saved'>;
+type Props = NativeStackScreenProps<ProfileStackParamList, 'Saved'>;
 
 export function SavedScreen({ navigation }: Props) {
   const {
@@ -21,6 +22,8 @@ export function SavedScreen({ navigation }: Props) {
     refetch,
     isRefetching,
   } = useSavedListings();
+
+  const { mutate: unsave } = useUnsaveListing();
 
   const handleListingPress = useCallback(
     (listingId: string) => {
@@ -40,12 +43,23 @@ export function SavedScreen({ navigation }: Props) {
         data={savedListings ?? []}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          item.listing ? (
-            <ListingCard
-              listing={item.listing}
-              onPress={() => handleListingPress(item.listingId)}
-            />
-          ) : null
+          <ListingCard
+            listing={item}
+            onPress={() => handleListingPress(item.id)}
+            rightAction={
+              <Button
+                mode="contained"
+                icon="heart"
+                onPress={() => unsave(item.id)}
+                style={styles.unsaveButton}
+                textColor={colors.white}
+                buttonColor={colors.accent}
+                compact
+              >
+                Unsave
+              </Button>
+            }
+          />
         )}
         contentContainerStyle={styles.list}
         refreshControl={
@@ -69,5 +83,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: 16,
     paddingBottom: 16,
+  },
+  unsaveButton: {
+    borderRadius: 5,
   },
 });

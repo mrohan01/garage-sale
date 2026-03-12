@@ -5,6 +5,7 @@ import {
   createListing,
   updateListing,
   deleteListing,
+  updateListingStatus,
 } from '../services/api';
 import type { CreateListingRequest, UpdateListingRequest } from '../types';
 
@@ -79,6 +80,23 @@ export function useDeleteListing() {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: listingKeys.bySale(variables.saleId),
+      });
+    },
+  });
+}
+
+export function useUpdateListingStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, saleId, status }: { id: string; saleId: string; status: string }) =>
+      updateListingStatus(id, status),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: listingKeys.bySale(variables.saleId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: listingKeys.detail(variables.id),
       });
     },
   });

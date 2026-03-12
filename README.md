@@ -40,6 +40,16 @@ npm install
 npx expo start
 ```
 
+## Seed Test Data
+
+To populate the database with sample sales and listings near Fredericktown, MO:
+
+```bash
+docker exec -i boxdrop-db-1 psql -U postgres -d boxdrop < scripts/seed_test_sales.sql
+```
+
+This creates 5 test seller accounts (password: `password123`), 5 active sales at different locations, and 13 listings across those sales. The script is idempotent for users (uses `ON CONFLICT DO NOTHING`), but will fail if sales/listings with the same IDs already exist — delete them first or drop and recreate the database.
+
 ## Project Structure
 
 ```

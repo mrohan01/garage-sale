@@ -34,10 +34,10 @@ export function SettingsScreen({ navigation }: Props) {
         <View style={styles.card}>
           <TouchableOpacity
             style={styles.menuItem}
-            onPress={() => navigation.navigate('ChangePassword')}
+            onPress={() => navigation.navigate('SecuritySettings')}
             activeOpacity={0.6}
           >
-            <Text style={styles.menuLabel}>Change Password</Text>
+            <Text style={styles.menuLabel}>Security</Text>
             <Text style={styles.chevron}>›</Text>
           </TouchableOpacity>
           <TouchableOpacity

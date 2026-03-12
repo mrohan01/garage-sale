@@ -9,9 +9,8 @@ import { TopNavBar } from '../components/TopNavBar';
 import type {
   AuthStackParamList,
   HomeStackParamList,
-  MapStackParamList,
-  CreateSaleStackParamList,
-  SavedStackParamList,
+  MySalesStackParamList,
+  MessagesStackParamList,
   ProfileStackParamList,
 } from '../types';
 
@@ -20,6 +19,8 @@ const isWeb = Platform.OS === 'web';
 // Auth screens
 import { LoginScreen } from '../screens/auth/LoginScreen';
 import { RegisterScreen } from '../screens/auth/RegisterScreen';
+import { VerifyCodeScreen } from '../screens/auth/VerifyCodeScreen';
+import { MethodPickerScreen } from '../screens/auth/MethodPickerScreen';
 
 // Home screens
 import { HomeScreen } from '../screens/home/HomeScreen';
@@ -27,35 +28,33 @@ import { SaleDetailScreen } from '../screens/home/SaleDetailScreen';
 import { ListingDetailScreen } from '../screens/home/ListingDetailScreen';
 import { ClaimScreen } from '../screens/home/ClaimScreen';
 
-// Map screens
-import { MapScreen } from '../screens/map/MapScreen';
-import { SaleDetailScreen as MapSaleDetailScreen } from '../screens/home/SaleDetailScreen';
-import { ListingDetailScreen as MapListingDetailScreen } from '../screens/home/ListingDetailScreen';
-
-// Create Sale screens
+// My Sales screens
+import { MySalesScreen as MySalesListScreen } from '../screens/sales/MySalesScreen';
+import { ManageSaleScreen } from '../screens/sales/ManageSaleScreen';
 import { CreateSaleScreen } from '../screens/create/CreateSaleScreen';
 import { AddListingsScreen } from '../screens/create/AddListingsScreen';
 
 // Saved screens
 import { SavedScreen } from '../screens/saved/SavedScreen';
-import { ListingDetailScreen as SavedListingDetailScreen } from '../screens/home/ListingDetailScreen';
 
 // Profile screens
 import { ProfileScreen } from '../screens/profile/ProfileScreen';
-import { MySalesScreen } from '../screens/profile/MySalesScreen';
 import { MyTransactionsScreen } from '../screens/transactions/MyTransactionsScreen';
 import { InboxScreen } from '../screens/messaging/InboxScreen';
 import { ChatScreen } from '../screens/messaging/ChatScreen';
 import { SettingsScreen } from '../screens/profile/SettingsScreen';
 import { EditProfileScreen } from '../screens/profile/EditProfileScreen';
-import { ChangePasswordScreen } from '../screens/profile/ChangePasswordScreen';
+import { SecuritySettingsScreen } from '../screens/profile/SecuritySettingsScreen';
+import { TOTPSetupScreen } from '../screens/profile/TOTPSetupScreen';
+import { SMSSetupScreen } from '../screens/profile/SMSSetupScreen';
 
 const defaultStackScreenOptions = {
   headerStyle: { backgroundColor: colors.darkSurface },
   headerTintColor: colors.white,
   headerTitleStyle: { fontWeight: 'bold' as const },
-  ...(isWeb ? { headerShown: false } : {}),
 };
+
+const webRootScreenOptions = isWeb ? { headerShown: false } as const : {};
 
 // --- Auth Stack ---
 const AuthStackNav = createNativeStackNavigator<AuthStackParamList>();
@@ -63,8 +62,10 @@ const AuthStackNav = createNativeStackNavigator<AuthStackParamList>();
 function AuthStack() {
   return (
     <AuthStackNav.Navigator screenOptions={defaultStackScreenOptions}>
-      <AuthStackNav.Screen name="Login" component={LoginScreen} />
+      <AuthStackNav.Screen name="Login" component={LoginScreen} options={webRootScreenOptions} />
       <AuthStackNav.Screen name="Register" component={RegisterScreen} />
+      <AuthStackNav.Screen name="VerifyCode" component={VerifyCodeScreen} options={{ title: 'Verify Code' }} />
+      <AuthStackNav.Screen name="MethodPicker" component={MethodPickerScreen} options={{ title: 'Choose Method' }} />
     </AuthStackNav.Navigator>
   );
 }
@@ -75,7 +76,7 @@ const HomeStackNav = createNativeStackNavigator<HomeStackParamList>();
 function HomeStack() {
   return (
     <HomeStackNav.Navigator screenOptions={defaultStackScreenOptions}>
-      <HomeStackNav.Screen name="Home" component={HomeScreen} />
+      <HomeStackNav.Screen name="Home" component={HomeScreen} options={webRootScreenOptions} />
       <HomeStackNav.Screen name="SaleDetail" component={SaleDetailScreen} options={{ title: 'Sale Details' }} />
       <HomeStackNav.Screen name="ListingDetail" component={ListingDetailScreen} options={{ title: 'Listing Details' }} />
       <HomeStackNav.Screen name="Claim" component={ClaimScreen} options={{ title: 'Claim Item' }} />
@@ -83,40 +84,30 @@ function HomeStack() {
   );
 }
 
-// --- Map Stack ---
-const MapStackNav = createNativeStackNavigator<MapStackParamList>();
+// --- My Sales Stack ---
+const MySalesStackNav = createNativeStackNavigator<MySalesStackParamList>();
 
-function MapStack() {
+function MySalesStack() {
   return (
-    <MapStackNav.Navigator screenOptions={defaultStackScreenOptions}>
-      <MapStackNav.Screen name="Map" component={MapScreen} />
-      <MapStackNav.Screen name="SaleDetail" component={MapSaleDetailScreen} options={{ title: 'Sale Details' }} />
-      <MapStackNav.Screen name="ListingDetail" component={MapListingDetailScreen} options={{ title: 'Listing Details' }} />
-    </MapStackNav.Navigator>
+    <MySalesStackNav.Navigator screenOptions={defaultStackScreenOptions}>
+      <MySalesStackNav.Screen name="MySalesList" component={MySalesListScreen} options={{ title: 'My Sales', ...webRootScreenOptions }} />
+      <MySalesStackNav.Screen name="ManageSale" component={ManageSaleScreen} options={{ title: 'Manage Sale' }} />
+      <MySalesStackNav.Screen name="CreateSale" component={CreateSaleScreen} options={{ title: 'Create Sale' }} />
+      <MySalesStackNav.Screen name="AddListings" component={AddListingsScreen} options={{ title: 'Add Listings' }} />
+      <MySalesStackNav.Screen name="ListingDetail" component={ListingDetailScreen} options={{ title: 'Listing Details' }} />
+    </MySalesStackNav.Navigator>
   );
 }
 
-// --- Create Sale Stack ---
-const CreateStackNav = createNativeStackNavigator<CreateSaleStackParamList>();
+// --- Messages Stack ---
+const MessagesStackNav = createNativeStackNavigator<MessagesStackParamList>();
 
-function CreateStack() {
+function MessagesStack() {
   return (
-    <CreateStackNav.Navigator screenOptions={defaultStackScreenOptions}>
-      <CreateStackNav.Screen name="CreateSale" component={CreateSaleScreen} options={{ title: 'Create Sale' }} />
-      <CreateStackNav.Screen name="AddListings" component={AddListingsScreen} options={{ title: 'Add Listings' }} />
-    </CreateStackNav.Navigator>
-  );
-}
-
-// --- Saved Stack ---
-const SavedStackNav = createNativeStackNavigator<SavedStackParamList>();
-
-function SavedStack() {
-  return (
-    <SavedStackNav.Navigator screenOptions={defaultStackScreenOptions}>
-      <SavedStackNav.Screen name="Saved" component={SavedScreen} />
-      <SavedStackNav.Screen name="ListingDetail" component={SavedListingDetailScreen} options={{ title: 'Listing Details' }} />
-    </SavedStackNav.Navigator>
+    <MessagesStackNav.Navigator screenOptions={defaultStackScreenOptions}>
+      <MessagesStackNav.Screen name="Inbox" component={InboxScreen} options={{ title: 'Messages', ...webRootScreenOptions }} />
+      <MessagesStackNav.Screen name="Chat" component={ChatScreen} />
+    </MessagesStackNav.Navigator>
   );
 }
 
@@ -126,13 +117,14 @@ const ProfileStackNav = createNativeStackNavigator<ProfileStackParamList>();
 function ProfileStack() {
   return (
     <ProfileStackNav.Navigator screenOptions={defaultStackScreenOptions}>
-      <ProfileStackNav.Screen name="Profile" component={ProfileScreen} />
-      <ProfileStackNav.Screen name="MySales" component={MySalesScreen} options={{ title: 'My Sales' }} />
+      <ProfileStackNav.Screen name="Profile" component={ProfileScreen} options={webRootScreenOptions} />
       <ProfileStackNav.Screen name="MyTransactions" component={MyTransactionsScreen} options={{ title: 'My Transactions' }} />
-      <ProfileStackNav.Screen name="Inbox" component={InboxScreen} />
-      <ProfileStackNav.Screen name="Chat" component={ChatScreen} />
+      <ProfileStackNav.Screen name="Saved" component={SavedScreen} options={{ title: 'Saved Items' }} />
+      <ProfileStackNav.Screen name="ListingDetail" component={ListingDetailScreen} options={{ title: 'Listing Details' }} />
       <ProfileStackNav.Screen name="EditProfile" component={EditProfileScreen} options={{ title: 'Edit Profile' }} />
-      <ProfileStackNav.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ title: 'Change Password' }} />
+      <ProfileStackNav.Screen name="SecuritySettings" component={SecuritySettingsScreen} options={{ title: 'Security' }} />
+      <ProfileStackNav.Screen name="TOTPSetup" component={TOTPSetupScreen} options={{ title: 'Authenticator Setup' }} />
+      <ProfileStackNav.Screen name="SMSSetup" component={SMSSetupScreen} options={{ title: 'SMS Setup' }} />
       <ProfileStackNav.Screen name="Settings" component={SettingsScreen} />
     </ProfileStackNav.Navigator>
   );
@@ -174,32 +166,24 @@ function MainTabs() {
         name="HomeTab"
         component={HomeStack}
         options={{
-          tabBarLabel: 'Home',
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => <MaterialCommunityIcons name="home" size={size} color={color} />,
+          tabBarLabel: 'Explore',
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => <MaterialCommunityIcons name="map-search" size={size} color={color} />,
         }}
       />
       <Tab.Screen
-        name="MapTab"
-        component={MapStack}
+        name="MySalesTab"
+        component={MySalesStack}
         options={{
-          tabBarLabel: 'Map',
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => <MaterialCommunityIcons name="map-marker-radius" size={size} color={color} />,
+          tabBarLabel: 'My Sales',
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => <MaterialCommunityIcons name="tag-multiple" size={size} color={color} />,
         }}
       />
       <Tab.Screen
-        name="CreateTab"
-        component={CreateStack}
+        name="MessagesTab"
+        component={MessagesStack}
         options={{
-          tabBarLabel: 'Create',
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => <MaterialCommunityIcons name="plus-circle" size={size} color={color} />,
-        }}
-      />
-      <Tab.Screen
-        name="SavedTab"
-        component={SavedStack}
-        options={{
-          tabBarLabel: 'Saved',
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => <MaterialCommunityIcons name="heart" size={size} color={color} />,
+          tabBarLabel: 'Messages',
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => <MaterialCommunityIcons name="message-text" size={size} color={color} />,
         }}
       />
       <Tab.Screen

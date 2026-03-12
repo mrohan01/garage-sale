@@ -39,8 +39,8 @@ interface AuthState {
   userId: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, displayName: string) => Promise<void>;
+  login: (challengeId: string, method: string, code: string) => Promise<void>;
+  register: (challengeId: string, code: string) => Promise<void>;
   logout: () => Promise<void>;
   setTokens: (accessToken: string, refreshToken: string, userId: string) => void;
   loadStoredTokens: () => Promise<void>;
@@ -62,16 +62,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ accessToken, refreshToken, userId, isAuthenticated: true });
   },
 
-  login: async (email, password) => {
-    // Import lazily to avoid circular dependency
-    const { login: apiLogin } = require('../services/api');
-    const response = await apiLogin({ email, password });
+  login: async (challengeId, method, code) => {
+    const { loginVerify } = require('../services/api');
+    const response = await loginVerify(challengeId, method, code);
     get().setTokens(response.accessToken, response.refreshToken, response.userId);
   },
 
-  register: async (email, password, displayName) => {
-    const { register: apiRegister } = require('../services/api');
-    const response = await apiRegister({ email, password, displayName });
+  register: async (challengeId, code) => {
+    const { registerVerify } = require('../services/api');
+    const response = await registerVerify(challengeId, code);
     get().setTokens(response.accessToken, response.refreshToken, response.userId);
   },
 

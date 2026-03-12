@@ -19,8 +19,8 @@ class MessageController(private val messageService: MessageService) {
         HttpResponse.ok(ApiResponse(messageService.getThreads(request.userId())))
 
     @Get("/{id}")
-    fun getMessages(request: HttpRequest<*>, @PathVariable id: UUID): HttpResponse<ApiResponse<List<MessageResponse>>> =
-        HttpResponse.ok(ApiResponse(messageService.getMessages(id, request.userId())))
+    fun getMessages(request: HttpRequest<*>, @PathVariable id: UUID): HttpResponse<ApiResponse<ThreadDetailResponse>> =
+        HttpResponse.ok(ApiResponse(messageService.getThreadDetail(id, request.userId())))
 
     @Post("/{id}")
     fun sendMessage(request: HttpRequest<*>, @PathVariable id: UUID, @Body body: SendMessageRequest): HttpResponse<ApiResponse<MessageResponse>> =

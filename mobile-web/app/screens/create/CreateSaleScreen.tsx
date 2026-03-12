@@ -10,23 +10,26 @@ import {
 import { TextInput, Button, Text, HelperText } from 'react-native-paper';
 import { useForm, Controller } from 'react-hook-form';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useCreateSale } from '../../hooks';
+import { useCreateSale, useCurrentUser } from '../../hooks';
 import { colors } from '../../theme';
 import { useLocationStore } from '../../stores/useLocationStore';
 import { WebContentWrapper } from '../../components/WebContentWrapper';
-import type { CreateSaleStackParamList, CreateSaleRequest } from '../../types';
+import { DateTimePicker } from '../../components';
+import type { MySalesStackParamList, CreateSaleRequest } from '../../types';
 
-type Props = NativeStackScreenProps<CreateSaleStackParamList, 'CreateSale'>;
+type Props = NativeStackScreenProps<MySalesStackParamList, 'CreateSale'>;
 
-export function CreateSaleScreen({ navigation }: Props) {
+export function CreateSaleScreen({ navigation, route }: Props) {
   const { latitude, longitude } = useLocationStore();
   const { mutate: createSale, isPending } = useCreateSale();
+  const { data: user } = useCurrentUser();
+  const params = route.params;
 
   const { control, handleSubmit, formState: { errors } } = useForm<CreateSaleRequest>({
     defaultValues: {
-      title: '',
-      description: '',
-      address: '',
+      title: params?.relistTitle ?? '',
+      description: params?.relistDescription ?? '',
+      address: params?.relistAddress ?? user?.address ?? '',
       latitude: latitude ?? 0,
       longitude: longitude ?? 0,
       startsAt: '',
@@ -43,7 +46,7 @@ export function CreateSaleScreen({ navigation }: Props) {
 
     createSale(saleData, {
       onSuccess: (sale) => {
-        navigation.replace('AddListings', { saleId: sale.id });
+        navigation.replace('AddListings', { saleId: sale.id, relistItems: params?.relistItems });
       },
       onError: (error) => {
         Alert.alert('Error', (error as Error).message ?? 'Failed to create sale');
@@ -125,41 +128,35 @@ export function CreateSaleScreen({ navigation }: Props) {
           </Text>
         )}
 
-        <Text variant="labelLarge" style={styles.label}>Start Date/Time (ISO format) *</Text>
+        <Text variant="labelLarge" style={styles.label}>Start Date/Time *</Text>
         <Controller
           control={control}
           name="startsAt"
           rules={{ required: 'Start date is required' }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              mode="outlined"
+          render={({ field: { onChange, value } }) => (
+            <DateTimePicker
               label="Start Date/Time"
-              style={styles.input}
-              placeholder="2025-06-15T09:00:00"
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
+              value={value ? new Date(value) : null}
+              onChange={(date) => onChange(date.toISOString())}
               error={!!errors.startsAt}
+              minimumDate={new Date()}
             />
           )}
         />
         {errors.startsAt && <HelperText type="error">{errors.startsAt.message}</HelperText>}
 
-        <Text variant="labelLarge" style={styles.label}>End Date/Time (ISO format) *</Text>
+        <Text variant="labelLarge" style={styles.label}>End Date/Time *</Text>
         <Controller
           control={control}
           name="endsAt"
           rules={{ required: 'End date is required' }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              mode="outlined"
+          render={({ field: { onChange, value } }) => (
+            <DateTimePicker
               label="End Date/Time"
-              style={styles.input}
-              placeholder="2025-06-15T17:00:00"
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
+              value={value ? new Date(value) : null}
+              onChange={(date) => onChange(date.toISOString())}
               error={!!errors.endsAt}
+              minimumDate={new Date()}
             />
           )}
         />

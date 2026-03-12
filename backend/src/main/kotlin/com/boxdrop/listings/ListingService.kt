@@ -1,6 +1,7 @@
 package com.boxdrop.listings
 
 import com.boxdrop.common.dto.*
+import com.boxdrop.common.exceptions.BadRequestException
 import com.boxdrop.common.exceptions.NotFoundException
 import com.boxdrop.common.exceptions.UnauthorizedException
 import com.boxdrop.sales.SaleRepository
@@ -55,6 +56,17 @@ class ListingService(
             category = request.category ?: listing.category,
             condition = request.condition ?: listing.condition, updatedAt = Instant.now()
         )
+        listingRepository.update(updated)
+        return toResponse(updated)
+    }
+
+    fun updateStatus(id: UUID, sellerId: UUID, newStatus: String): ListingResponse {
+        val listing = listingRepository.findById(id).orElseThrow { NotFoundException("Listing not found") }
+        val sale = saleRepository.findById(listing.saleId).orElseThrow { NotFoundException("Sale not found") }
+        if (sale.sellerId != sellerId) throw UnauthorizedException("Not your listing")
+        val validStatuses = listOf("AVAILABLE", "SOLD", "REMOVED")
+        if (newStatus !in validStatuses) throw BadRequestException("Invalid status: $newStatus")
+        val updated = listing.copy(status = newStatus, updatedAt = Instant.now())
         listingRepository.update(updated)
         return toResponse(updated)
     }

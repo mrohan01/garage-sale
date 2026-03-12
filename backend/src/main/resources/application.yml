@@ -1,3 +1,7 @@
+jackson:
+  serialization:
+    writeDatesAsTimestamps: false
+
 micronaut:
   application:
     name: boxdrop-backend
@@ -8,6 +12,7 @@ micronaut:
       configurations:
         web:
           allowed-origins:
+            - http://localhost
             - http://localhost:19006
             - http://localhost:8081
           allowed-methods:
@@ -52,6 +57,15 @@ boxdrop:
   rate-limit:
     max-requests: ${RATE_LIMIT_MAX:5000}
     window-seconds: ${RATE_LIMIT_WINDOW:60}
+  verification:
+    otp-expiry-seconds: ${OTP_EXPIRY:600}
+  resend:
+    api-key: ${RESEND_API_KEY:}
+    from-email: ${RESEND_FROM_EMAIL:onboarding@resend.dev}
+  twilio:
+    account-sid: ${TWILIO_ACCOUNT_SID:}
+    auth-token: ${TWILIO_AUTH_TOKEN:}
+    from-number: ${TWILIO_FROM_NUMBER:}
   stripe:
     api-key: ${STRIPE_API_KEY:sk_test_placeholder}
     webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_placeholder}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Card, Text } from 'react-native-paper';
 import { Sale } from '../types';
 import { StatusBadge } from './StatusBadge';
@@ -8,11 +8,15 @@ import { colors } from '../theme';
 interface SaleCardProps {
   sale: Sale;
   onPress: () => void;
+  onViewDetails?: () => void;
 }
 
-export const SaleCard: React.FC<SaleCardProps> = ({ sale, onPress }) => {
+export const SaleCard: React.FC<SaleCardProps> = ({ sale, onPress, onViewDetails }) => {
   const startsAt = new Date(sale.startsAt).toLocaleDateString();
   const endsAt = new Date(sale.endsAt).toLocaleDateString();
+  const displayStatus = sale.status === 'ACTIVE' && new Date(sale.startsAt) > new Date()
+    ? 'PENDING' as const
+    : sale.status;
 
   return (
     <Card style={styles.card} onPress={onPress} mode="outlined">
@@ -21,7 +25,7 @@ export const SaleCard: React.FC<SaleCardProps> = ({ sale, onPress }) => {
           <Text variant="titleMedium" style={styles.title} numberOfLines={1}>
             {sale.title}
           </Text>
-          <StatusBadge status={sale.status} />
+          <StatusBadge status={displayStatus} />
         </View>
         <Text variant="bodySmall" style={styles.address} numberOfLines={1}>
           {sale.address}
@@ -34,6 +38,13 @@ export const SaleCard: React.FC<SaleCardProps> = ({ sale, onPress }) => {
             {sale.description}
           </Text>
         ) : null}
+        {onViewDetails && (
+          <Pressable onPress={onViewDetails}>
+            <Text variant="labelSmall" style={styles.viewDetails}>
+              View details →
+            </Text>
+          </Pressable>
+        )}
       </Card.Content>
     </Card>
   );
@@ -67,5 +78,10 @@ const styles = StyleSheet.create({
   description: {
     color: colors.textSecondary,
     marginTop: 4,
+  },
+  viewDetails: {
+    color: colors.primary,
+    fontWeight: '600',
+    marginTop: 8,
   },
 });

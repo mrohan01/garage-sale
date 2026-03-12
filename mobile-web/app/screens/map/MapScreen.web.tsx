@@ -42,9 +42,17 @@ export function MapScreen({ navigation }: Props) {
 
   const { data: sales } = useMapSales(latitude ?? undefined, longitude ?? undefined, 10);
 
-  const handleSalePress = (saleId: string) => {
-    navigation.navigate('SaleDetail', { saleId });
-  };
+  const filteredSales = useMemo(() => {
+    if (!sales) return [];
+    if (!searchText.trim()) return sales;
+    const query = searchText.toLowerCase();
+    return sales.filter(
+      (sale) =>
+        sale.title.toLowerCase().includes(query) ||
+        (sale.address && sale.address.toLowerCase().includes(query)) ||
+        (sale.description && sale.description.toLowerCase().includes(query)),
+    );
+  }, [sales, searchText]);
 
   return (
     <View style={styles.container}>
@@ -64,15 +72,59 @@ export function MapScreen({ navigation }: Props) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {(sales ?? []).map((sale) => (
-          <Marker
-            key={sale.id}
-            position={[sale.latitude, sale.longitude]}
-            eventHandlers={{ click: () => handleSalePress(sale.id) }}
-          >
-            <Popup>{sale.title}</Popup>
-          </Marker>
-        ))}
+        {filteredSales.map((sale) => {
+          const startsAt = new Date(sale.startsAt).toLocaleDateString();
+          const endsAt = new Date(sale.endsAt).toLocaleDateString();
+          return (
+            <Marker key={sale.id} position={[sale.latitude, sale.longitude]}>
+              <Popup>
+                <div style={{ minWidth: 180, maxWidth: 260 }}>
+                  <strong style={{ fontSize: 14 }}>{sale.title}</strong>
+                  {sale.address ? (
+                    <div style={{ fontSize: 12, color: '#667085', marginTop: 2 }}>
+                      {sale.address}
+                    </div>
+                  ) : null}
+                  <div style={{ fontSize: 12, color: '#98A2B3', marginTop: 2 }}>
+                    {startsAt} – {endsAt}
+                  </div>
+                  {sale.description ? (
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: '#667085',
+                        marginTop: 4,
+                        overflow: 'hidden',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                      }}
+                    >
+                      {sale.description}
+                    </div>
+                  ) : null}
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigation.navigate('SaleDetail', { saleId: sale.id });
+                    }}
+                    style={{
+                      display: 'inline-block',
+                      marginTop: 6,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: '#2A9D8F',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    View details →
+                  </a>
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
     </View>
   );

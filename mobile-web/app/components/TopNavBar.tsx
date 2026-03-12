@@ -2,6 +2,7 @@ import React from 'react';
 import { Image, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { CommonActions } from '@react-navigation/native';
 import { colors } from '../theme';
 
 interface NavItem {
@@ -11,10 +12,9 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { key: 'HomeTab', label: 'Home', icon: 'home' },
-  { key: 'MapTab', label: 'Map', icon: 'map-marker-radius' },
-  { key: 'CreateTab', label: 'Create Sale', icon: 'plus-circle' },
-  { key: 'SavedTab', label: 'Saved', icon: 'heart' },
+  { key: 'HomeTab', label: 'Explore', icon: 'map-search' },
+  { key: 'MySalesTab', label: 'My Sales', icon: 'tag-multiple' },
+  { key: 'MessagesTab', label: 'Messages', icon: 'message-text' },
   { key: 'ProfileTab', label: 'Profile', icon: 'account' },
 ];
 
@@ -27,12 +27,29 @@ interface TopNavBarProps {
 export function TopNavBar({ state, navigation }: TopNavBarProps) {
   const activeRoute = state?.routes?.[state.index]?.name;
 
+  const handleNavPress = (key: string) => {
+    if (activeRoute === key) {
+      const tabRoute = state.routes.find((r: any) => r.name === key);
+      if (tabRoute?.state && tabRoute.state.index > 0) {
+        navigation.dispatch({
+          ...CommonActions.reset({
+            index: 0,
+            routes: [{ name: tabRoute.state.routes[0].name }],
+          }),
+          target: tabRoute.state.key,
+        });
+        return;
+      }
+    }
+    navigation.navigate(key);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.inner}>
         <Pressable
           style={styles.brand}
-          onPress={() => navigation.navigate('HomeTab')}
+          onPress={() => handleNavPress('HomeTab')}
         >
           <Image
             source={require('../../assets/icon.png')}
@@ -50,7 +67,7 @@ export function TopNavBar({ state, navigation }: TopNavBarProps) {
               <Pressable
                 key={item.key}
                 style={[styles.navLink, isActive && styles.navLinkActive]}
-                onPress={() => navigation.navigate(item.key)}
+                onPress={() => handleNavPress(item.key)}
               >
                 <MaterialCommunityIcons
                   name={item.icon as any}

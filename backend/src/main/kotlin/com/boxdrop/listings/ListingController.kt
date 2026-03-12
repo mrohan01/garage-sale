@@ -26,6 +26,10 @@ class ListingController(private val listingService: ListingService) {
     fun update(request: HttpRequest<*>, @PathVariable id: UUID, @Body body: UpdateListingRequest): HttpResponse<ApiResponse<ListingResponse>> =
         HttpResponse.ok(ApiResponse(listingService.update(id, request.userId(), body)))
 
+    @Put("/listings/{id}/status")
+    fun updateStatus(request: HttpRequest<*>, @PathVariable id: UUID, @Body body: UpdateListingStatusRequest): HttpResponse<ApiResponse<ListingResponse>> =
+        HttpResponse.ok(ApiResponse(listingService.updateStatus(id, request.userId(), body.status)))
+
     @Delete("/listings/{id}")
     fun delete(request: HttpRequest<*>, @PathVariable id: UUID): HttpResponse<Unit> {
         listingService.delete(id, request.userId())

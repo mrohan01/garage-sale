@@ -16,18 +16,18 @@ class SavedController(
     private val listingService: ListingService
 ) {
     @Post("/{listingId}")
-    fun save(request: HttpRequest<*>, @PathVariable listingId: UUID): HttpResponse<Unit> {
+    fun save(request: HttpRequest<*>, @PathVariable listingId: UUID): HttpResponse<*> {
         val userId = request.userId()
         if (!savedItemRepository.existsByUserIdAndListingId(userId, listingId)) {
             savedItemRepository.save(SavedItem(UUID.randomUUID(), userId, listingId, Instant.now()))
         }
-        return HttpResponse.created(Unit)
+        return HttpResponse.ok<Any>(null)
     }
 
     @Delete("/{listingId}")
-    fun unsave(request: HttpRequest<*>, @PathVariable listingId: UUID): HttpResponse<Unit> {
+    fun unsave(request: HttpRequest<*>, @PathVariable listingId: UUID): HttpResponse<*> {
         savedItemRepository.deleteByUserIdAndListingId(request.userId(), listingId)
-        return HttpResponse.noContent()
+        return HttpResponse.noContent<Any>()
     }
 
     @Get

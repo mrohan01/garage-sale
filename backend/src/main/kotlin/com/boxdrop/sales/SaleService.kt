@@ -15,13 +15,19 @@ class SaleService(
     private val listingRepository: ListingRepository
 ) {
     fun create(sellerId: UUID, request: CreateSaleRequest): SaleResponse {
-        val sale = saleRepository.save(Sale(
+        val now = Instant.now()
+        val sale = Sale(
             id = UUID.randomUUID(), sellerId = sellerId, title = request.title,
             description = request.description, address = request.address,
             latitude = request.latitude, longitude = request.longitude,
             startsAt = request.startsAt, endsAt = request.endsAt,
-            status = "DRAFT", createdAt = Instant.now(), updatedAt = Instant.now()
-        ))
+            status = "DRAFT", createdAt = now, updatedAt = now
+        )
+        saleRepository.insertSale(
+            sale.id, sale.sellerId, sale.title, sale.description, sale.address,
+            sale.latitude, sale.longitude, sale.startsAt, sale.endsAt,
+            sale.status, sale.createdAt, sale.updatedAt
+        )
         return toResponse(sale, 0)
     }
 
@@ -42,7 +48,11 @@ class SaleService(
             longitude = request.longitude ?: sale.longitude, startsAt = request.startsAt ?: sale.startsAt,
             endsAt = request.endsAt ?: sale.endsAt, updatedAt = Instant.now()
         )
-        saleRepository.update(updated)
+        saleRepository.updateSale(
+            updated.id, updated.title, updated.description, updated.address,
+            updated.latitude, updated.longitude, updated.startsAt, updated.endsAt,
+            updated.status, updated.updatedAt
+        )
         return toResponse(updated)
     }
 
@@ -51,8 +61,25 @@ class SaleService(
         if (sale.sellerId != sellerId) throw UnauthorizedException("Not your sale")
         if (sale.status != "DRAFT") throw BadRequestException("Sale is not in DRAFT status")
         val activated = sale.copy(status = "ACTIVE", updatedAt = Instant.now())
-        saleRepository.update(activated)
+        saleRepository.updateSale(
+            activated.id, activated.title, activated.description, activated.address,
+            activated.latitude, activated.longitude, activated.startsAt, activated.endsAt,
+            activated.status, activated.updatedAt
+        )
         return toResponse(activated)
+    }
+
+    fun endSale(saleId: UUID, sellerId: UUID): SaleResponse {
+        val sale = saleRepository.findById(saleId).orElseThrow { NotFoundException("Sale not found") }
+        if (sale.sellerId != sellerId) throw UnauthorizedException("Not your sale")
+        if (sale.status != "ACTIVE") throw BadRequestException("Sale is not active")
+        val ended = sale.copy(status = "ENDED", updatedAt = Instant.now())
+        saleRepository.updateSale(
+            ended.id, ended.title, ended.description, ended.address,
+            ended.latitude, ended.longitude, ended.startsAt, ended.endsAt,
+            ended.status, ended.updatedAt
+        )
+        return toResponse(ended)
     }
 
     fun delete(saleId: UUID, sellerId: UUID) {

@@ -11,7 +11,7 @@ import java.util.UUID
 data class User(
     @field:Id val id: UUID,
     val email: String,
-    val passwordHash: String,
+    val passwordHash: String?,
     val displayName: String?,
     val avatarUrl: String?,
     val address: String?,

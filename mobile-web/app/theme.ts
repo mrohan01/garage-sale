@@ -1,31 +1,31 @@
 import { MD3LightTheme } from 'react-native-paper';
 
 export const colors = {
-  primary: '#2A9D8F',
-  primaryDark: '#1A7A6E',
-  primaryLight: '#E0F5F1',
-  primaryGradientStart: '#264653',
-  primaryGradientEnd: '#2A9D8F',
+  primary: '#97C7BD',
+  primaryDark: '#7AADA2',
+  primaryLight: '#E8F3F0',
+  primaryGradientStart: '#29282B',
+  primaryGradientEnd: '#97C7BD',
 
-  accent: '#E76F51',
-  accentLight: '#FFF0EB',
+  accent: '#C4897A',
+  accentLight: '#F5EBE8',
 
-  highlight: '#F4A261',
-  highlightLight: '#FFF5E6',
+  highlight: '#D4B896',
+  highlightLight: '#F5EFE6',
 
-  background: '#F7F7F8',
+  background: '#F5F5F5',
   surface: '#FFFFFF',
   surfaceElevated: '#FFFFFF',
-  darkSurface: '#264653',
+  darkSurface: '#29282B',
 
-  textPrimary: '#1D2939',
-  textSecondary: '#667085',
-  textMuted: '#98A2B3',
+  textPrimary: '#29282B',
+  textSecondary: '#8F9795',
+  textMuted: '#9C9B9F',
   textOnDark: '#FFFFFF',
   textOnPrimary: '#FFFFFF',
 
-  border: '#E4E7EC',
-  borderLight: '#F2F4F7',
+  border: '#D2D1D4',
+  borderLight: '#E9E8EA',
 
   success: '#12B76A',
   successLight: '#ECFDF3',
@@ -72,5 +72,5 @@ export const paperTheme = {
       level5: colors.surface,
     },
   },
-  roundness: 12,
+  roundness: 5,
 };
