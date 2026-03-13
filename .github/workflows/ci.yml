@@ -65,8 +65,53 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      # Start Docker services (postgres, redis, minio)
+      - name: Start Docker services
+        run: docker compose up -d
+
+      # Set up Java for backend
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Build backend
+        run: ./gradlew build -x test
+        working-directory: backend
+        env:
+          DB_HOST: localhost
+          DB_NAME: boxdrop
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
+
+      # Start backend in background
+      - name: Start backend
+        run: ./gradlew run &
+        working-directory: backend
+        env:
+          DB_HOST: localhost
+          DB_NAME: boxdrop
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
+
+      # Install frontend dependencies
       - run: npm ci
         working-directory: mobile-web
+
+      # Build and start Expo web in background
+      - run: npx expo export:web
+        working-directory: mobile-web
+      - run: npx serve dist -l 8081 &
+        working-directory: mobile-web
+
+      # Wait for services to be ready
+      - name: Wait for services
+        run: |
+          sleep 30
+          curl -f http://localhost:8080/health || exit 1
+
+      # Install and run E2E tests
       - run: npm ci
         working-directory: tests/e2e
       - run: npx playwright install --with-deps
