@@ -1,5 +1,7 @@
 # Mobile-Web Frontend — Agent Guide
 
+> For project overview, quick start, and shared conventions, see the root [AGENTS.md](../AGENTS.md).
+
 ## Overview
 
 Expo SDK 52 + React Native + TypeScript single-codebase app targeting iOS, Android, and Web. Uses React Navigation for routing, React Query for server state, Zustand for client state, and React Native Paper for Material Design UI.

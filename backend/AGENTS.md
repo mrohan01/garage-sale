@@ -1,5 +1,7 @@
 # Backend — Agent Guide
 
+> For project overview, quick start, and shared conventions, see the root [AGENTS.md](../AGENTS.md).
+
 ## Overview
 
 Micronaut 4.3.8 + Kotlin REST API running on Netty with JVM 21. Provides all API endpoints for the BoxDrop marketplace.

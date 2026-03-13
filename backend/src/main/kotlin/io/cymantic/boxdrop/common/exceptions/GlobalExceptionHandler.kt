@@ -1,6 +1,6 @@
-package com.cymantic.boxdrop.common.exceptions
+package io.cymantic.boxdrop.common.exceptions
 
-import com.cymantic.boxdrop.common.dto.ErrorResponse
+import io.cymantic.boxdrop.common.dto.ErrorResponse
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus

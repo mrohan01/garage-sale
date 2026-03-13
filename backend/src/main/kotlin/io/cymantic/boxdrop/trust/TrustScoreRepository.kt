@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.trust
+package io.cymantic.boxdrop.trust
 
 import io.micronaut.data.jdbc.annotation.JdbcRepository
 import io.micronaut.data.model.query.builder.sql.Dialect

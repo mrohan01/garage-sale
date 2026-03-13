@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.users
+package io.cymantic.boxdrop.users
 
 import io.micronaut.data.annotation.Id
 import io.micronaut.data.annotation.MappedEntity

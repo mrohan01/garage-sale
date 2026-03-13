@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.transactions
+package io.cymantic.boxdrop.transactions
 
 import io.micronaut.data.jdbc.annotation.JdbcRepository
 import io.micronaut.data.model.query.builder.sql.Dialect

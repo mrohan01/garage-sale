@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.sales
+package io.cymantic.boxdrop.sales
 
 import io.micronaut.data.annotation.Query
 import io.micronaut.data.jdbc.annotation.JdbcRepository

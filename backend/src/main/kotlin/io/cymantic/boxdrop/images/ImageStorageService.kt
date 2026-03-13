@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.images
+package io.cymantic.boxdrop.images
 
 import io.micronaut.context.annotation.Value
 import jakarta.inject.Singleton

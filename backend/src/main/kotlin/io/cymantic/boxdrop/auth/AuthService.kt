@@ -1,15 +1,15 @@
-package com.cymantic.boxdrop.auth
+package io.cymantic.boxdrop.auth
 
-import com.cymantic.boxdrop.common.dto.AuthResponse
-import com.cymantic.boxdrop.common.dto.LoginStartResponse
-import com.cymantic.boxdrop.common.dto.MethodResponse
-import com.cymantic.boxdrop.common.dto.TotpSetupResponse
-import com.cymantic.boxdrop.common.exceptions.BadRequestException
-import com.cymantic.boxdrop.notifications.EmailService
-import com.cymantic.boxdrop.notifications.SmsService
-import com.cymantic.boxdrop.trust.TrustService
-import com.cymantic.boxdrop.users.User
-import com.cymantic.boxdrop.users.UserRepository
+import io.cymantic.boxdrop.common.dto.AuthResponse
+import io.cymantic.boxdrop.common.dto.LoginStartResponse
+import io.cymantic.boxdrop.common.dto.MethodResponse
+import io.cymantic.boxdrop.common.dto.TotpSetupResponse
+import io.cymantic.boxdrop.common.exceptions.BadRequestException
+import io.cymantic.boxdrop.notifications.EmailService
+import io.cymantic.boxdrop.notifications.SmsService
+import io.cymantic.boxdrop.trust.TrustService
+import io.cymantic.boxdrop.users.User
+import io.cymantic.boxdrop.users.UserRepository
 import com.warrenstrange.googleauth.GoogleAuthenticator
 import jakarta.inject.Singleton
 import org.slf4j.LoggerFactory

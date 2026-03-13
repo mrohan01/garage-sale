@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.listings
+package io.cymantic.boxdrop.listings
 
 import io.micronaut.data.annotation.Id
 import io.micronaut.data.annotation.MappedEntity

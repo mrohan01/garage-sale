@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.offers
+package io.cymantic.boxdrop.offers
 
 import io.micronaut.data.annotation.Query
 import io.micronaut.data.jdbc.annotation.JdbcRepository

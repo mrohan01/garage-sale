@@ -1,7 +1,7 @@
-package com.cymantic.boxdrop.images
+package io.cymantic.boxdrop.images
 
-import com.cymantic.boxdrop.common.dto.ApiResponse
-import com.cymantic.boxdrop.common.dto.ErrorResponse
+import io.cymantic.boxdrop.common.dto.ApiResponse
+import io.cymantic.boxdrop.common.dto.ErrorResponse
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Consumes

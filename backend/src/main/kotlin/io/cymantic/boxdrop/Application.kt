@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop
+package io.cymantic.boxdrop
 
 import io.micronaut.runtime.Micronaut
 

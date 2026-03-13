@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.messaging
+package io.cymantic.boxdrop.messaging
 
 import io.micronaut.data.annotation.Id
 import io.micronaut.data.annotation.MappedEntity

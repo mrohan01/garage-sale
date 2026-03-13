@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.messaging
+package io.cymantic.boxdrop.messaging
 
 import io.micronaut.data.annotation.Query
 import io.micronaut.data.jdbc.annotation.JdbcRepository

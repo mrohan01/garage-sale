@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.users
+package io.cymantic.boxdrop.users
 
 import io.micronaut.data.jdbc.annotation.JdbcRepository
 import io.micronaut.data.model.query.builder.sql.Dialect

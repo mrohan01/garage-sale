@@ -1,8 +1,8 @@
-package com.cymantic.boxdrop.moderation
+package io.cymantic.boxdrop.moderation
 
-import com.cymantic.boxdrop.common.dto.ApiResponse
-import com.cymantic.boxdrop.common.dto.ReportRequest
-import com.cymantic.boxdrop.common.extensions.userId
+import io.cymantic.boxdrop.common.dto.ApiResponse
+import io.cymantic.boxdrop.common.dto.ReportRequest
+import io.cymantic.boxdrop.common.extensions.userId
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Body

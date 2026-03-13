@@ -1,11 +1,11 @@
-package com.cymantic.boxdrop.reviews
+package io.cymantic.boxdrop.reviews
 
-import com.cymantic.boxdrop.common.dto.CreateReviewRequest
-import com.cymantic.boxdrop.common.dto.ReviewResponse
-import com.cymantic.boxdrop.common.exceptions.BadRequestException
-import com.cymantic.boxdrop.common.exceptions.NotFoundException
-import com.cymantic.boxdrop.transactions.TransactionRepository
-import com.cymantic.boxdrop.trust.TrustService
+import io.cymantic.boxdrop.common.dto.CreateReviewRequest
+import io.cymantic.boxdrop.common.dto.ReviewResponse
+import io.cymantic.boxdrop.common.exceptions.BadRequestException
+import io.cymantic.boxdrop.common.exceptions.NotFoundException
+import io.cymantic.boxdrop.transactions.TransactionRepository
+import io.cymantic.boxdrop.trust.TrustService
 import jakarta.inject.Singleton
 import java.time.Instant
 import java.util.UUID

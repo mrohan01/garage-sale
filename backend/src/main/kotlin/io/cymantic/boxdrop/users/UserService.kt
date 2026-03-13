@@ -1,10 +1,10 @@
-package com.cymantic.boxdrop.users
+package io.cymantic.boxdrop.users
 
-import com.cymantic.boxdrop.common.dto.UpdateProfileRequest
-import com.cymantic.boxdrop.common.dto.UserProfileResponse
-import com.cymantic.boxdrop.common.exceptions.NotFoundException
-import com.cymantic.boxdrop.reviews.ReviewRepository
-import com.cymantic.boxdrop.trust.TrustScoreRepository
+import io.cymantic.boxdrop.common.dto.UpdateProfileRequest
+import io.cymantic.boxdrop.common.dto.UserProfileResponse
+import io.cymantic.boxdrop.common.exceptions.NotFoundException
+import io.cymantic.boxdrop.reviews.ReviewRepository
+import io.cymantic.boxdrop.trust.TrustScoreRepository
 import jakarta.inject.Singleton
 import java.time.Instant
 import java.util.UUID

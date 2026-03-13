@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.auth
+package io.cymantic.boxdrop.auth
 
 import jakarta.inject.Singleton
 import org.mindrot.jbcrypt.BCrypt

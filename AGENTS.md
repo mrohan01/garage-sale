@@ -6,6 +6,19 @@ BoxDrop is a **hyper-local garage sale marketplace**. Sellers create sale events
 
 **Repository:** `github.com/cymantic-io/boxdrop`
 
+## Documentation Guide
+
+| Document | Purpose |
+|----------|---------|
+| [README.md](README.md) | Quick start guide |
+| [AGENTS.md](AGENTS.md) | This file - comprehensive developer guide |
+| [docs/DESIGN.md](docs/DESIGN.md) | Full API design reference |
+| [docs/TODO.md](docs/TODO.md) | Launch checklist |
+| [VS_CODE_SETUP.md](VS_CODE_SETUP.md) | IDE configuration |
+| [MOBILE_CLIENTS.md](MOBILE_CLIENTS.md) | iOS/Android testing |
+| [backend/AGENTS.md](backend/AGENTS.md) | Backend-specific patterns and config |
+| [mobile-web/AGENTS.md](mobile-web/AGENTS.md) | Frontend-specific patterns and config |
+
 ## Architecture
 
 | Layer | Technology | Directory |
@@ -26,7 +39,7 @@ boxdrop/
 │   ├── build.gradle.kts      # Gradle build config (Micronaut 4.3.8)
 │   ├── Dockerfile             # Multi-stage Docker build
 │   └── src/main/
-│       ├── kotlin/com/cymantic/boxdrop/
+│       ├── kotlin/io/cymantic/boxdrop/
 │       │   ├── auth/          # Registration, login, OTP/TOTP/SMS verification
 │       │   ├── sales/         # Sale CRUD, activation, nearby queries
 │       │   ├── listings/      # Listing CRUD, images, price decay
@@ -66,7 +79,10 @@ boxdrop/
 │   └── seed_test_sales.sql   # Test data seed script
 ├── docker-compose.yml        # Local infra (Postgres, Redis, MinIO)
 ├── build.sh                  # Full build + test pipeline
-└── docs/TODO.md              # Launch checklist
+├── docs/
+│   ├── DESIGN.md             # Full API design reference
+│   └── TODO.md               # Launch checklist
+└── AGENTS.md                 # This file - project overview
 ```
 
 ## Prerequisites

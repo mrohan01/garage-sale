@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.moderation
+package io.cymantic.boxdrop.moderation
 
 import io.micronaut.data.jdbc.annotation.JdbcRepository
 import io.micronaut.data.model.query.builder.sql.Dialect

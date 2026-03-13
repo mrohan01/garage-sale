@@ -1,6 +1,6 @@
-package com.cymantic.boxdrop.auth
+package io.cymantic.boxdrop.auth
 
-import com.cymantic.boxdrop.common.exceptions.BadRequestException
+import io.cymantic.boxdrop.common.exceptions.BadRequestException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.warrenstrange.googleauth.GoogleAuthenticator

@@ -1,13 +1,13 @@
-package com.cymantic.boxdrop.messaging
+package io.cymantic.boxdrop.messaging
 
-import com.cymantic.boxdrop.common.dto.*
-import com.cymantic.boxdrop.common.exceptions.NotFoundException
-import com.cymantic.boxdrop.common.exceptions.UnauthorizedException
-import com.cymantic.boxdrop.listings.ListingRepository
-import com.cymantic.boxdrop.offers.Offer
-import com.cymantic.boxdrop.offers.OfferRepository
-import com.cymantic.boxdrop.sales.SaleRepository
-import com.cymantic.boxdrop.users.UserRepository
+import io.cymantic.boxdrop.common.dto.*
+import io.cymantic.boxdrop.common.exceptions.NotFoundException
+import io.cymantic.boxdrop.common.exceptions.UnauthorizedException
+import io.cymantic.boxdrop.listings.ListingRepository
+import io.cymantic.boxdrop.offers.Offer
+import io.cymantic.boxdrop.offers.OfferRepository
+import io.cymantic.boxdrop.sales.SaleRepository
+import io.cymantic.boxdrop.users.UserRepository
 import jakarta.inject.Singleton
 import java.time.Instant
 import java.util.UUID

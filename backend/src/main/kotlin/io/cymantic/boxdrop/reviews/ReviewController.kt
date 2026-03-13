@@ -1,9 +1,9 @@
-package com.cymantic.boxdrop.reviews
+package io.cymantic.boxdrop.reviews
 
-import com.cymantic.boxdrop.common.dto.ApiResponse
-import com.cymantic.boxdrop.common.dto.CreateReviewRequest
-import com.cymantic.boxdrop.common.dto.ReviewResponse
-import com.cymantic.boxdrop.common.extensions.userId
+import io.cymantic.boxdrop.common.dto.ApiResponse
+import io.cymantic.boxdrop.common.dto.CreateReviewRequest
+import io.cymantic.boxdrop.common.dto.ReviewResponse
+import io.cymantic.boxdrop.common.extensions.userId
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.*

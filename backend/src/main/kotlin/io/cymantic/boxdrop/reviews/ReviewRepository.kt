@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.reviews
+package io.cymantic.boxdrop.reviews
 
 import io.micronaut.data.jdbc.annotation.JdbcRepository
 import io.micronaut.data.model.query.builder.sql.Dialect

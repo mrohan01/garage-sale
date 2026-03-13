@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.moderation
+package io.cymantic.boxdrop.moderation
 
 import io.micronaut.data.annotation.Id
 import io.micronaut.data.annotation.MappedEntity

@@ -1,6 +1,6 @@
-package com.cymantic.boxdrop.common.extensions
+package io.cymantic.boxdrop.common.extensions
 
-import com.cymantic.boxdrop.common.exceptions.UnauthorizedException
+import io.cymantic.boxdrop.common.exceptions.UnauthorizedException
 import io.micronaut.http.HttpRequest
 import java.util.UUID
 

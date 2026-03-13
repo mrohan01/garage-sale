@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.notifications
+package io.cymantic.boxdrop.notifications
 
 import io.micronaut.context.annotation.Value
 import jakarta.inject.Singleton

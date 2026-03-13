@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.notifications
+package io.cymantic.boxdrop.notifications
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.micronaut.context.annotation.Value

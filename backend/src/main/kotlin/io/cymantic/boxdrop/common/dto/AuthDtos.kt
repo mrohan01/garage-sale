@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.common.dto
+package io.cymantic.boxdrop.common.dto
 
 import io.micronaut.serde.annotation.Serdeable
 

@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.security
+package io.cymantic.boxdrop.security
 
 import io.lettuce.core.api.StatefulRedisConnection
 import io.micronaut.context.annotation.Value

@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.transactions
+package io.cymantic.boxdrop.transactions
 
 import io.micronaut.context.annotation.Value
 import jakarta.inject.Singleton

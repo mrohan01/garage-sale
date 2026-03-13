@@ -1,6 +1,6 @@
-package com.cymantic.boxdrop.security
+package io.cymantic.boxdrop.security
 
-import com.cymantic.boxdrop.auth.JwtService
+import io.cymantic.boxdrop.auth.JwtService
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MutableHttpResponse

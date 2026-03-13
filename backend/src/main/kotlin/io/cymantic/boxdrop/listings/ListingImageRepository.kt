@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.listings
+package io.cymantic.boxdrop.listings
 
 import io.micronaut.data.jdbc.annotation.JdbcRepository
 import io.micronaut.data.model.query.builder.sql.Dialect

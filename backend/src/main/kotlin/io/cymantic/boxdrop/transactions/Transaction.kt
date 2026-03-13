@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.transactions
+package io.cymantic.boxdrop.transactions
 
 import io.micronaut.data.annotation.Id
 import io.micronaut.data.annotation.MappedEntity

@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.reviews
+package io.cymantic.boxdrop.reviews
 
 import io.micronaut.data.annotation.Id
 import io.micronaut.data.annotation.MappedEntity

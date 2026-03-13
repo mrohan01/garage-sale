@@ -1,8 +1,8 @@
-package com.cymantic.boxdrop.search
+package io.cymantic.boxdrop.search
 
-import com.cymantic.boxdrop.common.dto.ListingResponse
-import com.cymantic.boxdrop.common.dto.PaginatedResponse
-import com.cymantic.boxdrop.listings.ListingService
+import io.cymantic.boxdrop.common.dto.ListingResponse
+import io.cymantic.boxdrop.common.dto.PaginatedResponse
+import io.cymantic.boxdrop.listings.ListingService
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get

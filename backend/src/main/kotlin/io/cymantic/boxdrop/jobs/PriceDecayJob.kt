@@ -1,7 +1,7 @@
-package com.cymantic.boxdrop.jobs
+package io.cymantic.boxdrop.jobs
 
-import com.cymantic.boxdrop.listings.ListingRepository
-import com.cymantic.boxdrop.sales.SaleRepository
+import io.cymantic.boxdrop.listings.ListingRepository
+import io.cymantic.boxdrop.sales.SaleRepository
 import io.micronaut.scheduling.annotation.Scheduled
 import jakarta.inject.Singleton
 import java.math.BigDecimal

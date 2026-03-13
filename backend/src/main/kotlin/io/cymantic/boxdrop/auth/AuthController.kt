@@ -1,7 +1,7 @@
-package com.cymantic.boxdrop.auth
+package io.cymantic.boxdrop.auth
 
-import com.cymantic.boxdrop.common.dto.*
-import com.cymantic.boxdrop.common.extensions.userId
+import io.cymantic.boxdrop.common.dto.*
+import io.cymantic.boxdrop.common.extensions.userId
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Body

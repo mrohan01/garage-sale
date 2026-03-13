@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.saved
+package io.cymantic.boxdrop.saved
 
 import io.micronaut.data.jdbc.annotation.JdbcRepository
 import io.micronaut.data.model.query.builder.sql.Dialect

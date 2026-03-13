@@ -1,4 +1,4 @@
-package com.cymantic.boxdrop.trust
+package io.cymantic.boxdrop.trust
 
 import jakarta.inject.Singleton
 import java.time.Instant
