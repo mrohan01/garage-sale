@@ -60,7 +60,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("com.cymantic.boxdrop.ApplicationKt")
+    mainClass.set("io.cymantic.boxdrop.ApplicationKt")
 }
 
 val run by tasks.getting(JavaExec::class) {

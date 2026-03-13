@@ -46,7 +46,7 @@ The Dockerfile uses `eclipse-temurin:21-jdk-alpine` for build and `eclipse-temur
 ## Project Structure
 
 ```
-src/main/kotlin/com/boxdrop/
+src/main/kotlin/io/cymantic/boxdrop/
 ├── Application.kt            # Micronaut entry point
 ├── auth/                     # Passwordless auth (OTP via email/SMS, TOTP)
 │   ├── AuthController.kt     # POST /api/auth/register, login/start, login/verify, refresh
