@@ -16,6 +16,8 @@ test.describe('Claim and Payment Flow', () => {
   let buyerTokens: any;
   let sale: any;
   let listing: any;
+  let saleTitle: string;
+  let listingTitle: string;
 
   test.beforeAll(async () => {
     const sellerEmail = uniqueEmail('claim-seller');
@@ -23,9 +25,12 @@ test.describe('Claim and Payment Flow', () => {
 
     const startsAt = new Date(Date.now() - 3600000).toISOString();
     const endsAt = new Date(Date.now() + 86400000 * 3).toISOString();
+    const uniqueSuffix = Date.now().toString(36);
+    saleTitle = `Claim Test Sale ${uniqueSuffix}`;
+    listingTitle = `Claimable Widget ${uniqueSuffix}`;
 
     sale = await createSaleViaApi(sellerTokens, {
-      title: 'Claim Test Sale',
+      title: saleTitle,
       description: 'Sale for claim flow testing',
       address: '300 Claim St, Fredericktown, MO 63645',
       latitude: 37.5597,
@@ -37,7 +42,7 @@ test.describe('Claim and Payment Flow', () => {
     await activateSaleViaApi(sellerTokens, sale.id);
 
     listing = await createListingViaApi(sellerTokens, sale.id, {
-      title: 'Claimable Widget',
+      title: listingTitle,
       description: 'An item to test claiming',
       startingPrice: 35,
       minimumPrice: 15,
@@ -53,9 +58,9 @@ test.describe('Claim and Payment Flow', () => {
     await authenticateInBrowser(page, buyerTokens);
     await expect(page.locator('[data-testid="home-screen"]')).toBeVisible({ timeout: 15000 });
 
-    await navigateToSaleFromHome(page, 'Claim Test Sale');
-    await expect(page.getByText('Claimable Widget').first()).toBeVisible({ timeout: 10000 });
-    await page.getByText('Claimable Widget').first().click();
+    await navigateToSaleFromHome(page, saleTitle);
+    await expect(page.getByText(listingTitle).first()).toBeVisible({ timeout: 10000 });
+    await page.getByText(listingTitle).first().click();
 
     // Wait for listing detail screen container
     await expect(page.getByTestId('listing-detail-screen')).toBeVisible({ timeout: 15000 });
@@ -69,7 +74,7 @@ test.describe('Claim and Payment Flow', () => {
     await page.getByTestId('claim-button').click();
 
     await expect(page.getByText('Confirm Claim').first()).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('Claimable Widget').last()).toBeVisible();
+    await expect(page.getByText(listingTitle).last()).toBeVisible();
     await expect(page.getByTestId('claim-price')).toBeVisible();
 
     await page.getByText('Confirm Claim').last().click();

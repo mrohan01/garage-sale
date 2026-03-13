@@ -100,7 +100,7 @@ jobs:
         working-directory: mobile-web
 
       # Build and start Expo web in background
-      - run: npx expo export:web
+      - run: npx expo export
         working-directory: mobile-web
       - run: npx serve dist -l 8081 &
         working-directory: mobile-web
@@ -116,5 +116,8 @@ jobs:
         working-directory: tests/e2e
       - run: npx playwright install --with-deps
         working-directory: tests/e2e
-      - run: npx playwright test
+      - name: Clean up stale test data
+        run: |
+          docker exec -i boxdrop-db-1 psql -U postgres -d boxdrop -c "DELETE FROM transactions; DELETE FROM saved_items WHERE listing_id IN (SELECT id FROM listings WHERE sale_id IN (SELECT id FROM sales WHERE title LIKE '%Test Sale%')); DELETE FROM listings WHERE sale_id IN (SELECT id FROM sales WHERE title LIKE '%Test Sale%'); DELETE FROM sales WHERE title LIKE '%Test Sale%';"
+      - run: npx playwright test --workers=1
         working-directory: tests/e2e

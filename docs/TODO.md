@@ -40,7 +40,7 @@
 # Sign up at https://vercel.com
 # Import your GitHub repo
 # Framework preset: Other
-# Build command: npx expo export:web
+# Build command: npx expo export
 # Output directory: dist
 # Environment variables:
 #   - EXPO_PUBLIC_API_URL = https://your-railway-app.up.railway.app/api

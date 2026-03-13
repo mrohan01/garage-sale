@@ -887,7 +887,7 @@ Backend connects to:
 | Images | S3 + CloudFront CDN, presigned uploads from client |
 | Backend scaling | Stateless containers, 2+ replicas behind load balancer |
 | Mobile apps | Expo EAS Build for iOS/Android app store submissions |
-| Web app | `expo export:web` deployed to CDN (Vercel, CloudFront+S3) |
+| Web app | `expo export` deployed to CDN (Vercel, CloudFront+S3) |
 | Secrets | AWS Secrets Manager or environment variables via container platform |
 | Monitoring | Prometheus metrics from Micronaut, Grafana dashboards |
 | Error tracking | Sentry for both backend (JVM) and frontend (React Native) |
