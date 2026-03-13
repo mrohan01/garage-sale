@@ -63,15 +63,15 @@ export function HomeScreen({ navigation }: Props) {
   const [searchText, setSearchText] = useState('');
   const [selectedSaleId, setSelectedSaleId] = useState<string | null>(null);
   const [mapBounds, setMapBounds] = useState<MapBounds | null>(null);
-  const { latitude, longitude, requestLocation } = useLocationStore();
+  const { latitude, longitude, isLoading: locationLoading, requestLocation } = useLocationStore();
   const flatListRef = useRef<FlatList<Sale>>(null);
   const markerRefs = useRef<Record<string, L.Marker>>({});
 
   useEffect(() => {
-    if (latitude == null) {
+    if (latitude == null && !locationLoading) {
       requestLocation();
     }
-  }, [latitude, requestLocation]);
+  }, [latitude, locationLoading, requestLocation]);
 
   const isSearching = searchText.trim().length > 0;
 

@@ -1,8 +1,8 @@
-# Garage Sale Marketplace — Consolidated System Design
+# Box Drop — Consolidated System Design
 
 ## 1. Product Vision
 
-A **hyper-local marketplace** for garage sales and yard sales. Sellers create a **sale event** (representing a physical garage sale at a location and time), add multiple items to it with photos, and set pricing rules including automatic price decay over the sale's duration. Buyers discover sales and items on a **map-first interface**, claim items with a hold/payment via Stripe, and pick them up in person using a confirmation token.
+A **hyper-local marketplace** for garage sales, yard sales, and closet cleanouts. Sellers create a **sale event** (representing a physical sale at a location and time), add multiple items to it with photos, and set pricing rules including automatic price decay over the sale's duration. Buyers discover sales and items on a **map-first interface**, claim items with a hold/payment via Stripe, and pick them up in person using a confirmation token.
 
 The platform is **not** a general classified ads board. It is purpose-built for the garage sale use case: ephemeral, location-anchored, multi-item, time-bounded sale events.
 
@@ -11,7 +11,7 @@ The platform is **not** a general classified ads board. It is purpose-built for 
 ## 2. Core Domain Concepts
 
 | Concept | Description |
-|---------|-------------|
+| --- | --- |
 | **User** | A registered account. Can be a seller, buyer, or both. Has a trust score. |
 | **Sale** | A garage sale event at a specific location and time window. Owned by a seller. Contains multiple listings. |
 | **Listing** | A single item for sale within a Sale. Has photos, description, starting price, minimum price, and category. Subject to automatic price decay. |
@@ -38,7 +38,7 @@ USER ──reviews───> REVIEW <──────────── USER (
 ### 3.1 Backend
 
 | Layer | Technology | Rationale |
-|-------|-----------|-----------|
+| --- | --- | --- |
 | Language | **Kotlin 1.9** | Concise, null-safe, excellent JVM interop |
 | Framework | **Micronaut 4** | Fast startup, compile-time DI, cloud-native |
 | HTTP Server | **Netty** (via Micronaut) | Non-blocking, high throughput |
@@ -58,7 +58,7 @@ USER ──reviews───> REVIEW <──────────── USER (
 ### 3.2 Frontend
 
 | Layer | Technology | Rationale |
-|-------|-----------|-----------|
+| --- | --- | --- |
 | Framework | **Expo SDK 52 + React Native** | Single codebase for iOS, Android, Web |
 | Language | **TypeScript** | Type safety |
 | Navigation | **React Navigation 6** (tabs + stacks) | Standard for Expo apps |
@@ -76,7 +76,7 @@ USER ──reviews───> REVIEW <──────────── USER (
 ### 3.3 Infrastructure
 
 | Layer | Technology |
-|-------|-----------|
+| --- | --- |
 | Containerization | Docker + Docker Compose |
 | CI/CD | GitHub Actions |
 | Reverse Proxy | Nginx |
@@ -263,6 +263,7 @@ All tables use **UUID** primary keys. All timestamps are `TIMESTAMPTZ`. Flyway m
 ### 6.1 Core Tables
 
 #### users
+
 ```sql
 CREATE TABLE users (
     id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -277,6 +278,7 @@ CREATE INDEX idx_users_email ON users(email);
 ```
 
 #### sales
+
 ```sql
 CREATE TABLE sales (
     id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -298,6 +300,7 @@ CREATE INDEX idx_sales_dates ON sales(starts_at, ends_at);
 ```
 
 #### listings
+
 ```sql
 CREATE TABLE listings (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -320,6 +323,7 @@ CREATE INDEX idx_listings_price ON listings(current_price);
 ```
 
 #### listing_images
+
 ```sql
 CREATE TABLE listing_images (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -332,6 +336,7 @@ CREATE INDEX idx_listing_images_listing ON listing_images(listing_id);
 ```
 
 #### transactions
+
 ```sql
 CREATE TABLE transactions (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -360,6 +365,7 @@ CREATE INDEX idx_transactions_status ON transactions(status);
 ### 6.2 Messaging Tables
 
 #### messaging_threads
+
 ```sql
 CREATE TABLE messaging_threads (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -374,6 +380,7 @@ CREATE INDEX idx_threads_listing ON messaging_threads(listing_id);
 ```
 
 #### messages
+
 ```sql
 CREATE TABLE messages (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -389,6 +396,7 @@ CREATE INDEX idx_messages_thread ON messages(thread_id);
 ### 6.3 Trust & Moderation Tables
 
 #### user_trust_scores
+
 ```sql
 CREATE TABLE user_trust_scores (
     user_id                 UUID PRIMARY KEY REFERENCES users(id),
@@ -404,6 +412,7 @@ CREATE TABLE user_trust_scores (
 ```
 
 #### reviews
+
 ```sql
 CREATE TABLE reviews (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -419,6 +428,7 @@ CREATE UNIQUE INDEX idx_reviews_transaction ON reviews(transaction_id);
 ```
 
 #### reports
+
 ```sql
 CREATE TABLE reports (
     id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -436,6 +446,7 @@ CREATE INDEX idx_reports_status ON reports(status);
 ### 6.4 User Preferences Tables
 
 #### saved_items
+
 ```sql
 CREATE TABLE saved_items (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -474,7 +485,7 @@ All authenticated endpoints require `Authorization: Bearer <token>`.
 ### 7.1 Authentication
 
 | Method | Path | Description |
-|--------|------|-------------|
+| --- | --- | --- |
 | POST | `/api/auth/register` | Register new user |
 | POST | `/api/auth/login` | Login, returns access + refresh tokens |
 | POST | `/api/auth/refresh` | Exchange refresh token for new access token |
@@ -482,7 +493,7 @@ All authenticated endpoints require `Authorization: Bearer <token>`.
 ### 7.2 Users
 
 | Method | Path | Description |
-|--------|------|-------------|
+| --- | --- | --- |
 | GET | `/api/users/me` | Get current user profile |
 | PUT | `/api/users/me` | Update profile (display name, avatar) |
 | GET | `/api/users/{id}` | Get public profile of another user |
@@ -490,7 +501,7 @@ All authenticated endpoints require `Authorization: Bearer <token>`.
 ### 7.3 Sales
 
 | Method | Path | Description |
-|--------|------|-------------|
+| --- | --- | --- |
 | POST | `/api/sales` | Create a new sale event |
 | GET | `/api/sales` | List current user's sales |
 | GET | `/api/sales/{id}` | Get sale details with listings |
@@ -502,7 +513,7 @@ All authenticated endpoints require `Authorization: Bearer <token>`.
 ### 7.4 Listings
 
 | Method | Path | Description |
-|--------|------|-------------|
+| --- | --- | --- |
 | POST | `/api/sales/{saleId}/listings` | Add listing to a sale |
 | GET | `/api/sales/{saleId}/listings` | List items in a sale |
 | GET | `/api/listings/{id}` | Get listing detail |
@@ -512,7 +523,7 @@ All authenticated endpoints require `Authorization: Bearer <token>`.
 ### 7.5 Search & Map
 
 | Method | Path | Description |
-|--------|------|-------------|
+| --- | --- | --- |
 | GET | `/api/search` | Full-text search listings (`?q=bike&category=Sports&priceMin=10&priceMax=100&lat=...&lng=...&radius=10`) |
 | GET | `/api/map/listings` | Lightweight listing markers for map viewport (`?north=...&south=...&east=...&west=...`) |
 | GET | `/api/map/sales` | Sale event markers for map viewport |
@@ -520,7 +531,7 @@ All authenticated endpoints require `Authorization: Bearer <token>`.
 ### 7.6 Transactions
 
 | Method | Path | Description |
-|--------|------|-------------|
+| --- | --- | --- |
 | POST | `/api/transactions/claim` | Claim a listing (creates payment intent) |
 | POST | `/api/transactions/{id}/confirm-payment` | Confirm payment succeeded (webhook-driven) |
 | POST | `/api/transactions/{id}/confirm-pickup` | Seller scans pickup token |
@@ -531,7 +542,7 @@ All authenticated endpoints require `Authorization: Bearer <token>`.
 ### 7.7 Messaging
 
 | Method | Path | Description |
-|--------|------|-------------|
+| --- | --- | --- |
 | POST | `/api/messages/threads` | Create or get existing thread for a listing |
 | GET | `/api/messages/threads` | List user's conversation threads (inbox) |
 | GET | `/api/messages/threads/{id}` | Get messages in a thread |
@@ -541,14 +552,14 @@ All authenticated endpoints require `Authorization: Bearer <token>`.
 ### 7.8 Images
 
 | Method | Path | Description |
-|--------|------|-------------|
+| --- | --- | --- |
 | POST | `/api/images/upload` | Upload image (multipart), returns URL |
 | POST | `/api/images/presign` | Get presigned upload URL (for direct-to-S3) |
 
 ### 7.9 Saved Items
 
 | Method | Path | Description |
-|--------|------|-------------|
+| --- | --- | --- |
 | POST | `/api/saved/{listingId}` | Save a listing |
 | DELETE | `/api/saved/{listingId}` | Unsave a listing |
 | GET | `/api/saved` | Get user's saved listings |
@@ -556,30 +567,32 @@ All authenticated endpoints require `Authorization: Bearer <token>`.
 ### 7.10 Reviews
 
 | Method | Path | Description |
-|--------|------|-------------|
+| --- | --- | --- |
 | POST | `/api/reviews` | Leave a review (post-transaction) |
 | GET | `/api/users/{id}/reviews` | Get reviews for a seller |
 
 ### 7.11 Reports
 
 | Method | Path | Description |
-|--------|------|-------------|
+| --- | --- | --- |
 | POST | `/api/reports` | Report a user, listing, or message |
 
 ### 7.12 Webhooks
 
 | Method | Path | Description |
-|--------|------|-------------|
+| --- | --- | --- |
 | POST | `/api/webhooks/stripe` | Stripe webhook handler |
 
 ### 7.13 Standard Response Formats
 
 **Success (single):**
+
 ```json
 { "data": { ... } }
 ```
 
 **Success (paginated):**
+
 ```json
 {
   "data": [ ... ],
@@ -591,6 +604,7 @@ All authenticated endpoints require `Authorization: Bearer <token>`.
 ```
 
 **Error:**
+
 ```json
 {
   "error": "NOT_FOUND",
@@ -602,7 +616,7 @@ All authenticated endpoints require `Authorization: Bearer <token>`.
 ### 7.14 Rate Limits
 
 | Endpoint Group | Limit |
-|---------------|-------|
+| --- | --- |
 | Auth (login/register) | 10/minute |
 | Listing creation | 30/hour |
 | Message sending | 60/minute |
@@ -716,7 +730,7 @@ Auth Stack (unauthenticated)
 ### 9.2 State Management
 
 | Store | Contents |
-|-------|----------|
+| --- | --- |
 | `useAuthStore` (Zustand) | User session, tokens, login/logout |
 | `useLocationStore` (Zustand) | Device GPS, selected search location |
 | React Query | All server data: sales, listings, messages, etc. |
@@ -742,7 +756,7 @@ const api = axios.create({ baseURL: API_BASE_URL });
 ## 10. Security
 
 | Concern | Implementation |
-|---------|---------------|
+| --- | --- |
 | Authentication | JWT access tokens (15min) + refresh tokens (7d) |
 | Password storage | BCrypt with cost factor 12 |
 | API authorization | Filter checks JWT on all `/api/*` except auth endpoints |
@@ -763,7 +777,7 @@ const api = axios.create({ baseURL: API_BASE_URL });
 ### 11.1 Backend
 
 | Level | Tool | Scope |
-|-------|------|-------|
+| --- | --- | --- |
 | Unit | JUnit 5 + Mockk | Services, business logic, price decay, trust scoring |
 | Repository | Testcontainers (PostgreSQL + PostGIS) | Query correctness, migration validation |
 | Integration | Micronaut Test + Testcontainers | Full request/response through controllers |
@@ -772,7 +786,7 @@ const api = axios.create({ baseURL: API_BASE_URL });
 ### 11.2 Frontend
 
 | Level | Tool | Scope |
-|-------|------|-------|
+| --- | --- | --- |
 | Unit | Jest | Zustand stores, utility functions |
 | Component | Jest + RNTL | Screen rendering, user interactions |
 | E2E (Web) | Playwright | Full user flows on web build |
@@ -789,6 +803,7 @@ const api = axios.create({ baseURL: API_BASE_URL });
 ### 11.4 Load Testing
 
 k6 scripts simulating:
+
 - 100 concurrent users browsing map
 - 50 concurrent searches
 - 20 concurrent transactions
@@ -807,7 +822,7 @@ k6 scripts simulating:
 ### 12.2 docker-compose.yml Services
 
 | Service | Image | Ports |
-|---------|-------|-------|
+| --- | --- | --- |
 | `db` | `postgis/postgis:16-3.4` | 5432 |
 | `redis` | `redis:7-alpine` | 6379 |
 | `minio` | `minio/minio` | 9000, 9001 |
@@ -866,7 +881,7 @@ Backend connects to:
 ### 13.2 Key Recommendations
 
 | Concern | Recommendation |
-|---------|---------------|
+| --- | --- |
 | Database | AWS RDS PostgreSQL with PostGIS, Multi-AZ, automated backups |
 | Redis | AWS ElastiCache or managed Redis, for rate limits + WS pub/sub |
 | Images | S3 + CloudFront CDN, presigned uploads from client |
@@ -929,6 +944,7 @@ garage-sale/
 ## 15. Implementation Phases
 
 ### Phase 1 — Foundation (MVP)
+
 - Auth (register, login, JWT)
 - Users (profile)
 - Sales CRUD
@@ -940,6 +956,7 @@ garage-sale/
 - Full test suite for above
 
 ### Phase 2 — Transactions
+
 - Stripe Connect integration
 - Transaction state machine (claim → pay → pickup → complete)
 - Pickup token generation and verification
@@ -947,11 +964,13 @@ garage-sale/
 - Transaction history
 
 ### Phase 3 — Communication
+
 - Messaging (threads, messages, WebSocket delivery)
 - Push notifications (price drops, messages, transaction updates)
 - Reviews and ratings
 
 ### Phase 4 — Trust & Safety
+
 - Trust scoring system
 - Abuse reporting
 - Location privacy (jitter)
@@ -959,6 +978,7 @@ garage-sale/
 - Enhanced rate limiting
 
 ### Phase 5 — Production Hardening
+
 - Production Docker builds
 - CI/CD pipeline
 - Load testing

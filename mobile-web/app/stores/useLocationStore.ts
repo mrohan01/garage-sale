@@ -16,6 +16,10 @@ export const useLocationStore = create<LocationState>((set) => ({
   isLoading: false,
 
   requestLocation: async () => {
+    const state = useLocationStore.getState();
+    if (state.isLoading || (state.latitude != null && state.longitude != null)) {
+      return;
+    }
     set({ isLoading: true, errorMsg: null });
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -23,7 +27,11 @@ export const useLocationStore = create<LocationState>((set) => ({
         set({ errorMsg: 'Location permission denied', isLoading: false });
         return;
       }
-      const location = await Location.getCurrentPositionAsync({});
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+        timeInterval: 10000,
+        distanceInterval: 10,
+      });
       set({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,

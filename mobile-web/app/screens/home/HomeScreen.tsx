@@ -27,16 +27,16 @@ export function HomeScreen({ navigation }: Props) {
   const [searchText, setSearchText] = useState('');
   const [selectedSaleId, setSelectedSaleId] = useState<string | null>(null);
   const [mapRegion, setMapRegion] = useState<Region | null>(null);
-  const { latitude, longitude, requestLocation } = useLocationStore();
+  const { latitude, longitude, isLoading: locationLoading, requestLocation } = useLocationStore();
   const flatListRef = useRef<FlatList<Sale>>(null);
   const mapRef = useRef<MapView>(null);
   const markerRefs = useRef<Record<string, any>>({});
 
   useEffect(() => {
-    if (latitude == null) {
+    if (latitude == null && !locationLoading) {
       requestLocation();
     }
-  }, [latitude, requestLocation]);
+  }, [latitude, locationLoading, requestLocation]);
 
   const {
     data: nearbySales,

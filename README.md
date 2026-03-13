@@ -1,4 +1,4 @@
-# 🏷️ Garage Sale Marketplace
+# 🏷️ Box Drop Marketplace
 
 A **hyper-local marketplace** for garage sales and yard sales. Sellers create sale events at a physical location and time, add multiple items with photos and automatic price decay, and buyers discover sales on a map-first interface — claiming items with Stripe payments and picking them up in person.
 
@@ -14,7 +14,7 @@ A **hyper-local marketplace** for garage sales and yard sales. Sellers create sa
 ## Prerequisites
 
 | Tool | Version |
-|------|---------|
+| --- | --- |
 | Java | 21 (Temurin) |
 | Node.js | 20+ |
 | Docker & Docker Compose | Latest |
@@ -98,7 +98,7 @@ cd backend
 The API starts at `http://localhost:8080`. Key endpoints:
 
 | Endpoint | Description |
-|----------|-------------|
+| --- | --- |
 | `POST /api/auth/register` | Register a new user |
 | `POST /api/auth/login` | Login, returns JWT tokens |
 | `GET /api/sales/nearby` | Browse sales by location |
@@ -186,17 +186,18 @@ k6 run -e BASE_URL=https://staging.example.com api_load_test.js
 ```
 
 Load test scenarios (weighted):
+
 - **40%** — Browse nearby sales (`GET /api/sales/nearby`)
 - **30%** — Search listings (`GET /api/search`)
 - **20%** — View sale detail (`GET /api/sales/{id}`)
 - **10%** — View listing detail (`GET /api/listings/{id}`)
 
-Thresholds: p(95) response time < 500ms, error rate < 1%.
+Thresholds: p(95) response time &lt; 500ms, error rate &lt; 1%.
 
 ## Environment Variables
 
 | Variable | Description | Default |
-|----------|-------------|---------|
+| --- | --- | --- |
 | `DATASOURCES_DEFAULT_URL` | PostgreSQL JDBC URL | `jdbc:postgresql://localhost:5432/garagesale` |
 | `DATASOURCES_DEFAULT_USERNAME` | DB username | `garagesale` |
 | `DATASOURCES_DEFAULT_PASSWORD` | DB password | `garagesale` |
@@ -212,14 +213,14 @@ Thresholds: p(95) response time < 500ms, error rate < 1%.
 ## Docker Compose Services
 
 | Service | Image | Ports | Purpose |
-|---------|-------|-------|---------|
+| --- | --- | --- | --- |
 | `db` | `postgis/postgis:16-3.4` | `5432` | PostgreSQL + PostGIS database |
 | `redis` | `redis:7-alpine` | `6379` | Cache, rate limiting, pub/sub |
 | `minio` | `minio/minio` | `9000`, `9001` | Local S3-compatible object storage |
 
 ## API Documentation
 
-API documentation is available via the design document at [`docs/DESIGN.md`](docs/DESIGN.md), which includes full endpoint specifications, request/response schemas, and domain model documentation.
+API documentation is available via the design document at `docs/DESIGN.md`, which includes full endpoint specifications, request/response schemas, and domain model documentation.
 
 ## Contributing
 

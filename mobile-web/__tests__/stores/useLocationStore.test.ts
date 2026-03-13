@@ -1,14 +1,20 @@
 import { useLocationStore } from '../../app/stores/useLocationStore';
 
+const mockRequestPermissions = jest.fn();
+const mockGetPosition = jest.fn();
+
 jest.mock('expo-location', () => ({
-  requestForegroundPermissionsAsync: jest.fn().mockResolvedValue({ status: 'granted' }),
-  getCurrentPositionAsync: jest.fn().mockResolvedValue({
-    coords: { latitude: 40.7128, longitude: -74.006 },
-  }),
+  requestForegroundPermissionsAsync: (...args: unknown[]) => mockRequestPermissions(...args),
+  getCurrentPositionAsync: (...args: unknown[]) => mockGetPosition(...args),
+  Accuracy: { Balanced: 4 },
 }));
 
 describe('useLocationStore', () => {
   beforeEach(() => {
+    mockRequestPermissions.mockResolvedValue({ status: 'granted' });
+    mockGetPosition.mockResolvedValue({
+      coords: { latitude: 40.7128, longitude: -74.006 },
+    });
     useLocationStore.setState({
       latitude: null,
       longitude: null,
@@ -34,8 +40,7 @@ describe('useLocationStore', () => {
   });
 
   it('requestLocation sets error when permission denied', async () => {
-    const Location = require('expo-location');
-    Location.requestForegroundPermissionsAsync.mockResolvedValueOnce({ status: 'denied' });
+    mockRequestPermissions.mockResolvedValueOnce({ status: 'denied' });
 
     const { requestLocation } = useLocationStore.getState();
     await requestLocation();
@@ -47,8 +52,7 @@ describe('useLocationStore', () => {
   });
 
   it('requestLocation sets error on failure', async () => {
-    const Location = require('expo-location');
-    Location.getCurrentPositionAsync.mockRejectedValueOnce(new Error('fail'));
+    mockGetPosition.mockRejectedValueOnce(new Error('fail'));
 
     const { requestLocation } = useLocationStore.getState();
     await requestLocation();
@@ -56,5 +60,29 @@ describe('useLocationStore', () => {
     const state = useLocationStore.getState();
     expect(state.errorMsg).toBe('Failed to get location');
     expect(state.isLoading).toBe(false);
+  });
+
+  it('requestLocation does not duplicate requests when already loading', async () => {
+    useLocationStore.setState({ isLoading: true });
+    mockRequestPermissions.mockClear();
+    mockGetPosition.mockClear();
+
+    const { requestLocation } = useLocationStore.getState();
+    await requestLocation();
+
+    expect(mockRequestPermissions).not.toHaveBeenCalled();
+    expect(mockGetPosition).not.toHaveBeenCalled();
+  });
+
+  it('requestLocation does not duplicate requests when location already obtained', async () => {
+    useLocationStore.setState({ latitude: 40.7128, longitude: -74.006 });
+    mockRequestPermissions.mockClear();
+    mockGetPosition.mockClear();
+
+    const { requestLocation } = useLocationStore.getState();
+    await requestLocation();
+
+    expect(mockRequestPermissions).not.toHaveBeenCalled();
+    expect(mockGetPosition).not.toHaveBeenCalled();
   });
 });
