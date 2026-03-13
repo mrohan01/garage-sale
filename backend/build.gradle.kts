@@ -6,7 +6,7 @@ plugins {
     id("org.owasp.dependencycheck") version "9.0.9"
 }
 
-group = "com.cymantic.boxdrop"
+group = "io.cymantic.boxdrop"
 version = "0.1"
 
 repositories {
@@ -19,7 +19,7 @@ micronaut {
     testRuntime("junit5")
     processing {
         incremental(true)
-        annotations("com.cymantic.boxdrop.*")
+        annotations("io.cymantic.boxdrop.*")
     }
 }
 
